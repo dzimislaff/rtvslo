@@ -6,13 +6,14 @@ import nastavitve
 import re
 import pyperclip
 import requests
-import sys
-# import argparse
-# import subprocess
+from sys import argv
+import subprocess
 
 # za zaganjanje programa izven domače mape
 import os
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
+
+IME_PROGRAMA = 'rtvslo.py'
 
 
 def pridobi_api(povezava_do_html, n={}):
@@ -80,7 +81,7 @@ def info_json(džejsn):
     return (povezava_do_posnetka, ime_posnetka, opis_posnetka)
 
 
-def shrani_posnetek(informacije):
+def shrani_posnetek(informacije, n):
     '''
     vhod: informacije o posnetku: povezava do posnetka, ime, opis [tuple]
     izhod: posnetek
@@ -100,32 +101,67 @@ def pridobi_posnetek(povezava_do_html, n):
     informacije = info_json(pridobi_json(povezava_do_api, n))
     return informacije
 
-# TODO
-# def argumenti():
-#     p = argparse.ArgumentParser(
-#         description='Program, ki dostopa do posnetkov na portalu rtvslo.si\
-#                     Transmission.'
-#     )
-#     p.add_argument('-p', '--predvajaj', type=str,
-#                    help='predvajaj posnetek v predvajalniku')
-#     p.add_argument('-s', '--shrani', type=str,
-#                    help='predvajaj posnetek v predvajalniku')
 
-# nastavek za predvajanje posnetka
-# def predvajaj_posnetek(informacije, n):
-#     subprocess.call([n['predvajalnik'], informacije[0], n['možnosti']])
+def predvajaj_posnetek(informacije, n):
+    subprocess.call([n['predvajalnik'], informacije[0], n['možnosti']])
+
+
+def ukazna_vrstica():
+    sporočilo_raba = f'''
+    Uporaba: {IME_PROGRAMA} [izbira] [povezava]
+
+    Za pomoč vtipkaj: {IME_PROGRAMA} --pomoč
+    '''
+
+    sporočilo_pomoč = f'''
+    Preprost program, ki dostopa do posnetkov na spletnem portalu rtvslo.si.
+
+    Možnosti:
+      -s, --shrani      shrani posnetek v mapo, v kateri je bil program zagnan
+      -p, --predvajaj   predvaja posnetek v predvajalniku
+      --pomoč           izpiše to sporočilo - pomoč
+
+    Primer rabe:
+    - predvajaj posnetek
+      {IME_PROGRAMA} -p https://4d.rtvslo.si/arhiv/zrcalo-dneva/174612420
+
+    - shrani posnetek
+      {IME_PROGRAMA}
+    '''
+
+    pomoč = ['-h', '--help', 'pomoč', '--pomoč']
+
+    povezava_do_html = None
+    ukaz = shrani_posnetek
+    if (len(argv) == 1):
+        povezava_do_html = pyperclip.paste().lower()
+    elif (len(argv) == 2) and ('-p' in argv[1] or '-s' in argv[1]):
+        povezava_do_html = pyperclip.paste().lower()
+        if argv[1] == '-p':
+            ukaz = predvajaj_posnetek
+    elif argv[1] == '-p' and len(argv) == 3:
+        povezava_do_html = argv[2]
+        ukaz = predvajaj_posnetek
+    elif argv[1] == '-s' and len(argv) == 3:
+        povezava_do_html = argv[2]
+        ukaz = shrani_posnetek
+    elif len(argv) == 2 and argv[1].lower() in pomoč:
+        print(sporočilo_raba + sporočilo_pomoč)
+    else:
+        print(sporočilo_raba)
+    return (povezava_do_html, ukaz)
 
 
 def main():
-    # args = argumenti()
     n = nastavitve.naloži_nastavitve()
-    try:
-        povezava_do_html = sys.argv[1].lower()
-    except IndexError:
-        povezava_do_html = pyperclip.paste().lower()
-    finally:
-        informacije = pridobi_posnetek(povezava_do_html, n)
-        shrani_posnetek(informacije)
+    ukaz = ukazna_vrstica()
+    povezava_do_html = ukaz[0]
+    if povezava_do_html:
+        try:
+            informacije = pridobi_posnetek(povezava_do_html, n)
+            ukaz[1](informacije, n)
+        except (AttributeError, TypeError):
+            print('Neveljavna povezava.')
 
 
 if __name__ == '__main__':
