@@ -42,7 +42,7 @@ def pridobi_api(povezava_do_html, n={}):
         return (povezava_do_api, številka)
 
 
-def pridobi_json(povezava_do_api, n={}):
+def pridobi_json(povezava_do_api, n):
     '''
     vhod: povezava do API
     izhod: JSON s podatki o posnetku 
@@ -56,7 +56,20 @@ def pridobi_json(povezava_do_api, n={}):
     return json.loads(r.text)['response']
 
 
-def info_json(džejsn):
+def odstrani_znake(beseda, nedovoljeni_znaki):
+    '''
+    vhod: niz, tj. naslov posnetka, in seznam znakov
+    izhod: niz, tj. naslov posnetka, z odstranjenimi znaki
+    '''
+    nedovoljeni_znaki.append(',')
+    for i in nedovoljeni_znaki:
+        beseda = beseda.replace(i, '')
+    if any(i in beseda for i in nedovoljeni_znaki):
+        odstrani_naglase()
+    return beseda
+
+
+def info_json(džejsn, n):
     '''
     vhod: JSON s podatki o posnetku
     izhod: informacije o posnetku: povezava do posnetka, ime, opis [tuple]
@@ -65,20 +78,24 @@ def info_json(džejsn):
         # 4d.rtvslo.si
         streamer = džejsn['mediaFiles'][1]['streamers']['http'].rstrip('/')
         filename = džejsn['mediaFiles'][1]['filename'].lstrip('/')
+        mediatype = džejsn['mediaFiles'][0]['mediaType'].lower()
     except IndexError:
         # radioprvi.rtvslo.si, val202.rtvslo.si, ars.rtvslo.si
         streamer = džejsn['mediaFiles'][0]['streamers']['http'].rstrip('/')
         filename = džejsn['mediaFiles'][0]['filename'].lstrip('/')
+        mediatype = džejsn['mediaFiles'][0]['mediaType'].lower()
     finally:
         povezava_do_posnetka = f'{streamer}/{filename}'
 
-    ime_posnetka = džejsn['title'].replace(' ', '-').lower()
+    ime = džejsn['title'].replace(' ', '-').lower()
+    ime = odstrani_znake(ime, n['znaki'].split(','))
+    opis = None
     try:
-        opis_posnetka = džejsn['showDescription']
+        opis = džejsn['description']
+        print(opis)
     except KeyError as e:
         print('Ne najdem opisa posnetka.', e)
-        opis_posnetka = None
-    return (povezava_do_posnetka, ime_posnetka, opis_posnetka)
+    return (povezava_do_posnetka, ime, mediatype, opis, džejsn)
 
 
 def shrani_posnetek(informacije, n):
@@ -87,7 +104,9 @@ def shrani_posnetek(informacije, n):
     izhod: posnetek
     '''
     r = requests.get(informacije[0])
-    with open(f'{informacije[1][:21]}.mp4', 'w+b') as f:
+    with open(f'{informacije[1]}.json', 'w') as datoteka:
+        json.dump(informacije[4], datoteka, indent=4, ensure_ascii=False)
+    with open(f'{informacije[1]}.{informacije[2]}', 'w+b') as f:
         f.write(r.content)
 
 
@@ -98,15 +117,25 @@ def pridobi_posnetek(povezava_do_html, n):
     gre za metaukaz, ki veriži pridobi_api, pridobi_json in info_json
     '''
     povezava_do_api = pridobi_api(povezava_do_html, n)[0]
-    informacije = info_json(pridobi_json(povezava_do_api, n))
+    informacije = info_json(pridobi_json(povezava_do_api, n), n)
     return informacije
 
 
 def predvajaj_posnetek(informacije, n):
+    '''
+    vhod: informacije o posnetku in nastavitve
+    ukaz v zunanjem predvajalniku predvaja posnetek
+    '''
     subprocess.call([n['predvajalnik'], informacije[0], n['možnosti']])
 
 
 def ukazna_vrstica():
+    '''
+    vhod: (sys.)argv
+    izhod: povezava do spletne strani in uporabnikov vnos v ukazni vrstici
+    ukaz analizira uporabnikov vnos v ukazni vrstici; v primeru neustreznega 
+    ukaza izpiše sporočilo o rabi programa
+    '''
     sporočilo_raba = f'''
     Uporaba: {IME_PROGRAMA} [izbira] [povezava]
 
