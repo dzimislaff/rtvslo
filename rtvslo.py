@@ -22,7 +22,7 @@ def pridobi_api(povezava_do_html, n={}):
     izhod: povezava do API, id posnetka [tuple]
     '''
     # 4d.rtvslo.si
-    štiride = re.compile(r'https://4d\.rtvslo\.si/arhiv/\S+/\d{9,}')
+    štiride = re.compile(r'https?://4d\.rtvslo\.si/arhiv/\S+/\d{9,}')
     # radioprvi.rtvslo.si, val202.rtvslo.si, ars.rtvslo.si
     ostali = re.compile(r'^https://(ars|prvi|radioprvi|val202)\.rtvslo\.si/')
 
