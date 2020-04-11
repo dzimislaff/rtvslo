@@ -4,16 +4,9 @@
 import json
 import nastavitve
 import re
-import pyperclip
 import requests
-from sys import argv
+
 import subprocess
-
-# za zaganjanje programa izven domače mape
-import os
-os.chdir(os.path.dirname(os.path.realpath(__file__)))
-
-IME_PROGRAMA = 'rtvslo.py'
 
 
 def pridobi_api(povezava_do_html, n={}):
@@ -38,11 +31,11 @@ def pridobi_api(povezava_do_html, n={}):
                 'tvkp': 'tv.kp1',
                 'tvmb': 'tv.mb1',
                 'tvmmc': 'tv.mmctv'}
-                # nedelujoče povezave
-                # 'ra1': 'ra.a1',
-                # 'val202': 'ra.val201',
-                # 'ars': 'ra.ars',
-                # 'rasi': 'ra.rsi'
+        # nedelujoče povezave
+        # 'ra1': 'ra.a1',
+        # 'val202': 'ra.val201',
+        # 'ars': 'ra.ars',
+        # 'rasi': 'ra.rsi'
         for i in pari.keys():
             if i in povezava_do_html:
                 povezava_do_api = f"https://api.rtvslo.si/ava/getLiveStream/{pari[i]}?client_id={n['client_id']}"
@@ -135,69 +128,3 @@ def predvajaj_posnetek(informacije, n):
     ukaz v zunanjem predvajalniku predvaja posnetek
     '''
     subprocess.call([n['predvajalnik'], informacije[0], n['možnosti']])
-
-
-def ukazna_vrstica():
-    '''
-    vhod: (sys.)argv
-    izhod: povezava do spletne strani in uporabnikov vnos v ukazni vrstici
-    ukaz analizira uporabnikov vnos v ukazni vrstici; v primeru neustreznega 
-    ukaza izpiše sporočilo o rabi programa
-    '''
-    sporočilo_raba = f'''
-    Uporaba: {IME_PROGRAMA} [izbira] [povezava]
-
-    Za pomoč vtipkaj: {IME_PROGRAMA} --pomoč
-    '''
-
-    sporočilo_pomoč = f'''
-    Preprost program, ki dostopa do posnetkov na spletnem portalu rtvslo.si.
-
-    Možnosti:
-      -s, --shrani      shrani posnetek v mapo, v kateri je bil program zagnan
-      -p, --predvajaj   predvaja posnetek v predvajalniku
-      --pomoč           izpiše to sporočilo - pomoč
-
-    Primer rabe:
-    - predvajaj posnetek
-      {IME_PROGRAMA} -p https://4d.rtvslo.si/arhiv/zrcalo-dneva/174612420
-
-    - shrani posnetek
-      {IME_PROGRAMA}
-    '''
-    pomoč = ['-h', '--help', 'pomoč', '--pomoč']
-    povezava_do_html = None
-    ukaz = shrani_posnetek
-    if (len(argv) == 1):
-        povezava_do_html = pyperclip.paste().lower()
-    elif (len(argv) == 2) and ('-p' in argv[1] or '-s' in argv[1]):
-        povezava_do_html = pyperclip.paste().lower()
-        if argv[1] == '-p':
-            ukaz = predvajaj_posnetek
-    elif argv[1] == '-p' and len(argv) == 3:
-        povezava_do_html = argv[2]
-        ukaz = predvajaj_posnetek
-    elif argv[1] == '-s' and len(argv) == 3:
-        povezava_do_html = argv[2]
-        ukaz = shrani_posnetek
-    elif len(argv) == 2 and argv[1].lower() in pomoč:
-        print(sporočilo_raba + sporočilo_pomoč)
-    else:
-        print(sporočilo_raba)
-    return (povezava_do_html, ukaz)
-
-
-def main():
-    n = nastavitve.naloži_nastavitve()
-    ukaz = ukazna_vrstica()
-    povezava_do_html = ukaz[0]
-    if povezava_do_html:
-        try:
-            informacije = pridobi_posnetek(povezava_do_html, n)
-            ukaz[1](informacije, n)
-        except (AttributeError, TypeError):
-            print('Neveljavna povezava.')
-
-
-if __name__ == '__main__':
-    main()
