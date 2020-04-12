@@ -2,129 +2,222 @@
 # -*- coding: 'UTF-8' -*-
 
 import json
-import nastavitve
 import re
 import requests
-
 import subprocess
+from typing import NamedTuple
+import nastavitve
 
 
-def pridobi_api(povezava_do_html, n={}):
+class Posnetek(NamedTuple):
+    številka: str
+    jwt: str
+    povezava_do_posnetka: str
+    client_id: str
+
+
+class Info(NamedTuple):
+    naslov: str
+    mediatype: str
+    povezava_do_posnetka: str
+    opis: str
+    džejsn: dict
+
+
+def pridobi_spletno_stran(naslov):
     '''
-    vhod: povezava spletne strani, na kateri je posnetek 
-    izhod: povezava do API, id posnetka [tuple]
+    vhod: URL-povezava (niz)
+    izhod: spletna stran (requests.models.Response)
+    zahteve: requests
     '''
-    # 4d.rtvslo.si/arhiv
+    try:
+        return requests.get(naslov)
+    except requests.exceptions.ConnectionError:
+        return None
+
+
+def pridobi_json(povezava):
+    '''
+    vhod: URL-povezava (niz)
+    izhod: JSON (dict)
+    zahteve: json
+    pridobi informacije v obliki JSON o posnetku z api.rtvslo.si
+    '''
+    r = pridobi_spletno_stran(povezava)
+    if r:
+        return json.loads(r.text)
+    else:
+        return None
+
+
+def razberi_id(povezava_do_html):
+    '''
+    vhod: URL-povezava (niz)
+    izhod: številka, tj. ID-posnetka (niz)
+    zahteve: re
+    rezbere številko posnetka z URL-povezave
+    '''
     štiride = re.compile(r'https?://4d\.rtvslo\.si/arhiv/\S+/\d{7,11}')
-    # 4d.rtvslo.si/zivo
-    v_živo = re.compile(r'https?://4d\.rtvslo\.si/zivo/\S+')
     cifra = re.compile(r'\d{7,11}')
-
     if štiride.search(povezava_do_html):
-        # zadnjih 9 števk je id, morda bo treba v prihodnosti to spremeniti
-        številka = cifra.search(povezava_do_html).group()
-        povezava_do_api = f"https://api.rtvslo.si/ava/getRecording/{številka}?client_id={n['client_id']}"
-    elif v_živo.search(povezava_do_html):
-        pari = {'tvs1': 'tv.slo1',
-                'tvs2': 'tv.slo2',
-                'tvs3': 'tv.slo3',
-                'tvkp': 'tv.kp1',
-                'tvmb': 'tv.mb1',
-                'tvmmc': 'tv.mmctv'}
-        # nedelujoče povezave
-        # 'ra1': 'ra.a1',
-        # 'val202': 'ra.val201',
-        # 'ars': 'ra.ars',
-        # 'rasi': 'ra.rsi'
-        for i in pari.keys():
-            if i in povezava_do_html:
-                povezava_do_api = f"https://api.rtvslo.si/ava/getLiveStream/{pari[i]}?client_id={n['client_id']}"
-                break
-    return povezava_do_api
+        return cifra.search(povezava_do_html).group()
+    else:
+        return None
 
 
-def pridobi_json(povezava_do_api, n):
+def povezava_api_drm(povezava_do_html, številka, client_id):
     '''
-    vhod: povezava do API
-    izhod: JSON s podatki o posnetku 
-    ukaz pridobi informacije v obliki JSON o posnetku z api.rtvslo.si
+    vhod: URL-povezava, številka, client ID (vsi niz)
+    izhod: URL-povezava (niz)
+    vrne URL-povezavo do getRecordingDrm
     '''
-    r = requests.get(povezava_do_api)
-    # za posnetke, ki zahtevajo prijavo – začasno umaknjeno
-    # if 'prijava' in json.loads(r.text)['response']['mediaFiles'][0]['filename']:
-    #     povezava_do_api += f"&session_id={n['session_id']}"
-    #     r = requests.get(povezava_do_api)
-    return json.loads(r.text)['response']
+    povezava = (f"https://api.rtvslo.si/ava/getRecordingDrm/{številka}"
+                f"?client_id={client_id}")
+    return povezava
+
+
+def povezava_api_posnetek(številka, client_id, jwt):
+    povezava = (f"https://api.rtvslo.si/ava/getMedia/{številka}"
+                f"?client_id={client_id}&jwt={jwt}")
+    return povezava
+
+
+def povezava_api_info(posnetek):
+    '''
+    vhod: posnetek (namedtuple)
+    izhod: URL-povezava (niz)
+    vrne URL-povezavo do API getRecording
+    '''
+    if posnetek.številka:
+        povezava = (f"https://api.rtvslo.si/ava/getRecording/"
+                    f"{posnetek.številka}?client_id={posnetek.client_id}")
+    else:
+        povezava = None
+    return povezava
+
+
+def json_jwt(džejsn):
+    '''
+    vhod: JSON (dict)
+    izhod: jwt (niz)
+    '''
+    return džejsn['response']['jwt']
+
+
+def json_povezava(džejsn):
+    '''
+    vhod: JSON (dict)
+    izhod: URL-povezava (niz)
+    izlušči URL-povezavo do posnetka iz JSON-a
+    '''
+    izbire = džejsn['response']['mediaFiles']
+    if len(izbire) == 2:
+        if izbire[0]['height'] > izbire[1]['height']:
+            return izbire[0]['streams']['http']
+        else:
+            return izbire[1]['streams']['http']
 
 
 def odstrani_znake(beseda, nedovoljeni_znaki):
     '''
-    vhod: niz, tj. naslov posnetka, in seznam znakov
-    izhod: niz, tj. naslov posnetka, z odstranjenimi znaki
+    vhod: naslov posnetka (niz) in seznam znakov
+    izhod: naslov posnetka (niz) z odstranjenimi znaki
     '''
     nedovoljeni_znaki.append(',')
     for i in nedovoljeni_znaki:
         beseda = beseda.replace(i, '')
-    if any(i in beseda for i in nedovoljeni_znaki):
-        odstrani_naglase()
     return beseda
 
 
-def info_json(džejsn, n):
+def json_info(džejsn, povezava_do_posnetka, n):
     '''
-    vhod: JSON s podatki o posnetku
-    izhod: informacije o posnetku: povezava do posnetka, ime, opis [tuple]
+    vhod: JSON (dict), URL-povezava (niz), nastavitve
+    izhod: informacije (namedtuple)
     '''
     try:
-        # arhiv
-        streamer = džejsn['mediaFiles'][0]['streamers']['http'].rstrip('/')
-        filename = džejsn['mediaFiles'][0]['filename'].lstrip('/')
+        naslov = džejsn['response']['title'].replace(' ', '-').lower()
+        naslov = odstrani_znake(naslov, n['znaki'].split(','))
     except (KeyError, TypeError):
-        # živo
-        streamer = džejsn['mediaFiles'][0]['streamer'].rstrip('/')
-        filename = džejsn['mediaFiles'][0]['file'].lstrip('/').rstrip('?sub=0')
-    mediatype = džejsn['mediaFiles'][0]['mediaType'].lower()
-    povezava_do_posnetka = f'{streamer}/{filename}'
+        naslov = None
 
-    ime = džejsn['title'].replace(' ', '-').lower()
-    ime = odstrani_znake(ime, n['znaki'].split(','))
-    opis = None
+    try:
+        mediatype = džejsn['response']['mediaFiles'][0]['mediaType'].lower()
+    except (KeyError, TypeError):
+        mediatype = None
+
     try:
         opis = džejsn['description']
-        print(opis)
     except KeyError as e:
-        print('Ne najdem opisa posnetka.', e)
-    return (povezava_do_posnetka, ime, mediatype, opis, džejsn)
+        opis = None
+    else:
+        print(opis)
+
+    return Info(naslov=naslov,
+                mediatype=mediatype,
+                povezava_do_posnetka=povezava_do_posnetka,
+                opis=opis,
+                džejsn=džejsn)
 
 
-def shrani_posnetek(informacije, n):
+def pridobi_posnetek(url, n):
     '''
-    vhod: informacije o posnetku: povezava do posnetka, ime, opis [tuple]
-    izhod: posnetek
+    vhod: URL-povezava
+    izhod: informacije o posnetku (namedtuple)
+    gre za metaukaz
     '''
-    if informacije[2] == 'video':   # če gre za TV oz. radio v živo
-        return 0
-    r = requests.get(informacije[0])
-    with open(f'{informacije[1]}.json', 'w') as datoteka:
-        json.dump(informacije[4], datoteka, indent=4, ensure_ascii=False)
-    with open(f'{informacije[1]}.{informacije[2]}', 'w+b') as f:
+    številka = razberi_id(url)
+    client_id = n['client_id']
+    jwt = json_jwt(pridobi_json(povezava_api_drm(url, številka, client_id)))
+    povezava_do_posnetka = json_povezava(
+        pridobi_json(povezava_api_posnetek(številka, client_id, jwt)))
+    return Posnetek(številka=številka,
+                    jwt=jwt,
+                    povezava_do_posnetka=povezava_do_posnetka,
+                    client_id=client_id)
+
+
+def zapiši_posnetek(info):
+    '''
+    vhod: informacije (namedtuple)
+    izhod: /
+    v datoteko zapiše posnetek
+    '''
+    r = pridobi_spletno_stran(info.povezava_do_posnetka)
+    with open(f'{info.naslov}.{info.mediatype}', 'w+b') as f:
         f.write(r.content)
 
 
-def pridobi_posnetek(povezava_do_html, n):
+def zapiši_info(info):
     '''
-    vhod: povezava spletne strani, na kateri je posnetek
-    izhod: informacije o posnetku: povezava do posnetka, ime, opis [tuple]
-    gre za metaukaz, ki veriži pridobi_api, pridobi_json in info_json
+    vhod: informacije (namedtuple)
+    izhod: /
+    zahteve: json
+    v datoteko zapiđe informacije (JSON)
     '''
-    povezava_do_api = pridobi_api(povezava_do_html, n)
-    informacije = info_json(pridobi_json(povezava_do_api, n), n)
-    return informacije
+    with open(f'{info.naslov}.json', 'w') as datoteka:
+        json.dump(info.džejsn, datoteka, indent=4, ensure_ascii=False)
 
 
-def predvajaj_posnetek(informacije, n):
+def shrani_posnetek(posnetek, n):
     '''
-    vhod: informacije o posnetku in nastavitve
-    ukaz v zunanjem predvajalniku predvaja posnetek
+    vhod: informacije o posnetku (namedtuple)
+    izhod: /
+    gre za metaukaz
     '''
-    subprocess.call([n['predvajalnik'], informacije[0], n['možnosti']])
+    info = json_info(pridobi_json(povezava_api_info(posnetek)),
+                     posnetek.povezava_do_posnetka,
+                     n)
+    zapiši_info(info)
+    zapiši_posnetek(info)
+
+
+def predvajaj_posnetek(posnetek, n):
+    '''
+    vhod: informacije o posnetku (namedtuple), nastavitve
+    izhod: /
+    zahteve: subprocces
+    v zunanjem predvajalniku predvaja posnetek
+    '''
+    subprocess.call([n['predvajalnik'],
+                     posnetek.povezava_do_posnetka,
+                     n['možnosti']])

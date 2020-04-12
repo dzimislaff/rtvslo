@@ -69,11 +69,8 @@ def main():
     ukaz = ukazna_vrstica()
     povezava_do_html = ukaz[0]
     if povezava_do_html:
-        try:
-            informacije = rtvslo.pridobi_posnetek(povezava_do_html, n)
-            ukaz[1](informacije, n)
-        except (AttributeError, TypeError):
-            print('Neveljavna povezava.')
+        informacije = rtvslo.pridobi_posnetek(povezava_do_html, n)
+        ukaz[1](informacije, n)
 
 
 if __name__ == '__main__':
