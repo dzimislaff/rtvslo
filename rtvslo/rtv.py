@@ -6,7 +6,6 @@ import re
 import requests
 import subprocess
 from typing import NamedTuple
-import nastavitve
 
 
 class Posnetek(NamedTuple):
@@ -116,6 +115,8 @@ def json_povezava(džejsn):
             return izbire[0]['streams']['http']
         else:
             return izbire[1]['streams']['http']
+    else:
+        return izbire[0]['streams']['https']
 
 
 def odstrani_znake(beseda, nedovoljeni_znaki):
@@ -147,7 +148,7 @@ def json_info(džejsn, povezava_do_posnetka, n):
 
     try:
         opis = džejsn['description']
-    except KeyError as e:
+    except KeyError:
         opis = None
     else:
         print(opis)
@@ -176,29 +177,29 @@ def pridobi_posnetek(url, n):
                     client_id=client_id)
 
 
-def zapiši_posnetek(info):
+def zapiši_posnetek(info, cwd):
     '''
     vhod: informacije (namedtuple)
     izhod: /
     v datoteko zapiše posnetek
     '''
     r = pridobi_spletno_stran(info.povezava_do_posnetka)
-    with open(f'{info.naslov}.{info.mediatype}', 'w+b') as f:
+    with open(f'{cwd}/{info.naslov}.{info.mediatype}', 'w+b') as f:
         f.write(r.content)
 
 
-def zapiši_info(info):
+def zapiši_info(info, cwd):
     '''
     vhod: informacije (namedtuple)
     izhod: /
     zahteve: json
     v datoteko zapiđe informacije (JSON)
     '''
-    with open(f'{info.naslov}.json', 'w') as datoteka:
+    with open(f'{cwd}/{info.naslov}.json', 'w') as datoteka:
         json.dump(info.džejsn, datoteka, indent=4, ensure_ascii=False)
 
 
-def shrani_posnetek(posnetek, n):
+def shrani_posnetek(posnetek, n, cwd):
     '''
     vhod: informacije o posnetku (namedtuple)
     izhod: /
@@ -207,11 +208,11 @@ def shrani_posnetek(posnetek, n):
     info = json_info(pridobi_json(povezava_api_info(posnetek)),
                      posnetek.povezava_do_posnetka,
                      n)
-    zapiši_info(info)
-    zapiši_posnetek(info)
+    zapiši_info(info, cwd)
+    zapiši_posnetek(info, cwd)
 
 
-def predvajaj_posnetek(posnetek, n):
+def predvajaj_posnetek(posnetek, n, cwd=None):
     '''
     vhod: informacije o posnetku (namedtuple), nastavitve
     izhod: /

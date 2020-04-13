@@ -3,11 +3,12 @@
 
 from sys import argv
 import pyperclip
-import nastavitve
-import rtvslo
+import rtvslo.nastavitve
+import rtvslo.rtv
 
 # za zaganjanje programa izven domače mape
 import os
+CWD = os.getcwd()
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 
@@ -44,19 +45,19 @@ def ukazna_vrstica():
     '''
     pomoč = ['-h', '--help', 'pomoč', '--pomoč']
     povezava_do_html = None
-    ukaz = rtvslo.shrani_posnetek
+    ukaz = rtvslo.rtv.shrani_posnetek
     if (len(argv) == 1):
         povezava_do_html = pyperclip.paste().lower()
     elif (len(argv) == 2) and ('-p' in argv[1] or '-s' in argv[1]):
         povezava_do_html = pyperclip.paste().lower()
         if argv[1] == '-p':
-            ukaz = rtvslo.predvajaj_posnetek
+            ukaz = rtvslo.rtv.predvajaj_posnetek
     elif argv[1] == '-p' and len(argv) == 3:
         povezava_do_html = argv[2]
-        ukaz = rtvslo.predvajaj_posnetek
+        ukaz = rtvslo.rtv.predvajaj_posnetek
     elif argv[1] == '-s' and len(argv) == 3:
         povezava_do_html = argv[2]
-        ukaz = rtvslo.shrani_posnetek
+        ukaz = rtvslo.rtv.shrani_posnetek
     elif len(argv) == 2 and argv[1].lower() in pomoč:
         print(sporočilo_raba + sporočilo_pomoč)
     else:
@@ -65,12 +66,12 @@ def ukazna_vrstica():
 
 
 def main():
-    n = nastavitve.naloži_nastavitve()
+    n = rtvslo.nastavitve.naloži_nastavitve()
     ukaz = ukazna_vrstica()
     povezava_do_html = ukaz[0]
     if povezava_do_html:
-        informacije = rtvslo.pridobi_posnetek(povezava_do_html, n)
-        ukaz[1](informacije, n)
+        informacije = rtvslo.rtv.pridobi_posnetek(povezava_do_html, n)
+        ukaz[1](informacije, n, CWD)
 
 
 if __name__ == '__main__':
