@@ -99,7 +99,10 @@ def json_jwt(džejsn):
     vhod: JSON (dict)
     izhod: jwt (niz)
     '''
-    return džejsn['response']['jwt']
+    try:
+        return džejsn['response']['jwt']
+    except KeyError:
+        return None
 
 
 def json_povezava(džejsn):
@@ -108,7 +111,10 @@ def json_povezava(džejsn):
     izhod: URL-povezava (niz)
     izlušči URL-povezavo do posnetka iz JSON-a
     '''
-    izbire = džejsn['response']['mediaFiles']
+    try:
+        izbire = džejsn['response']['mediaFiles']
+    except KeyError:
+        return None
     if len(izbire) == 2:
         if izbire[0]['height'] > izbire[1]['height']:
             return izbire[0]['streams']['http']
@@ -206,6 +212,8 @@ def shrani_posnetek(posnetek, n, cwd):
     izhod: /
     gre za metaukaz
     '''
+    if not posnetek.povezava_do_posnetka:
+        pass
     info = json_info(pridobi_json(povezava_api_info(posnetek)),
                      posnetek.povezava_do_posnetka,
                      n)
@@ -220,6 +228,9 @@ def predvajaj_posnetek(posnetek, n, cwd=None):
     zahteve: subprocces
     v zunanjem predvajalniku predvaja posnetek
     '''
-    subprocess.call([n['predvajalnik'],
-                     posnetek.povezava_do_posnetka,
-                     n['možnosti']])
+    if not posnetek.povezava_do_posnetka:
+        pass
+    else:
+        subprocess.call([n['predvajalnik'],
+                         posnetek.povezava_do_posnetka,
+                         n['možnosti']])
