@@ -35,16 +35,15 @@ def pridobi_spletno_stran(naslov):
         return None
 
 
-def pridobi_json(povezava):
+def pridobi_json(stran):
     '''
     vhod: URL-povezava (niz)
     izhod: JSON (dict)
     zahteve: json
     pridobi informacije v obliki JSON o posnetku z api.rtvslo.si
     '''
-    r = pridobi_spletno_stran(povezava)
-    if r:
-        return json.loads(r.text)
+    if stran:
+        return json.loads(stran.text)
     else:
         return None
 
@@ -168,9 +167,11 @@ def pridobi_posnetek(url, n):
     '''
     številka = razberi_id(url)
     client_id = n['client_id']
-    jwt = json_jwt(pridobi_json(povezava_api_drm(url, številka, client_id)))
+    jwt = json_jwt(pridobi_json(pridobi_spletno_stran(
+        povezava_api_drm(url, številka, client_id))))
     povezava_do_posnetka = json_povezava(
-        pridobi_json(povezava_api_posnetek(številka, client_id, jwt)))
+        pridobi_json(pridobi_spletno_stran(
+            povezava_api_posnetek(številka, client_id, jwt))))
     return Posnetek(številka=številka,
                     jwt=jwt,
                     povezava_do_posnetka=povezava_do_posnetka,
@@ -201,7 +202,7 @@ def zapiši_info(info, cwd):
 
 def shrani_posnetek(posnetek, n, cwd):
     '''
-    vhod: informacije o posnetku (namedtuple)
+    vhod: informacije o posnetku (namedtuple), nastavitve, klicna mapa
     izhod: /
     gre za metaukaz
     '''
@@ -214,7 +215,7 @@ def shrani_posnetek(posnetek, n, cwd):
 
 def predvajaj_posnetek(posnetek, n, cwd=None):
     '''
-    vhod: informacije o posnetku (namedtuple), nastavitve
+    vhod: informacije o posnetku (namedtuple), nastavitve, klicna mapa (none)
     izhod: /
     zahteve: subprocces
     v zunanjem predvajalniku predvaja posnetek
