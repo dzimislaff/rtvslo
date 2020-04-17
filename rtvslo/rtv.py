@@ -23,10 +23,9 @@ class Info(NamedTuple):
     džejsn: dict
 
 
-def pridobi_spletno_stran(naslov):
+def pridobi_spletno_stran(naslov: str
+                          ) -> requests.models.Response:
     '''
-    vhod: URL-povezava (niz)
-    izhod: spletna stran (requests.models.Response)
     zahteve: requests
     '''
     try:
@@ -35,10 +34,9 @@ def pridobi_spletno_stran(naslov):
         return None
 
 
-def pridobi_json(stran):
+def pridobi_json(stran: requests.models.Response
+                 ) -> dict:
     '''
-    vhod: URL-povezava (niz)
-    izhod: JSON (dict)
     zahteve: json
     pridobi informacije v obliki JSON o posnetku z api.rtvslo.si
     '''
@@ -48,12 +46,11 @@ def pridobi_json(stran):
         return None
 
 
-def razberi_id(povezava_do_html):
+def razberi_id(povezava_do_html: str
+               ) -> str:
     '''
-    vhod: URL-povezava (niz)
-    izhod: številka, tj. ID-posnetka (niz)
     zahteve: re
-    rezbere številko posnetka z URL-povezave
+    razbere številko posnetka z URL-povezave
     '''
     štiride = re.compile(r'https?://4d\.rtvslo\.si/arhiv/\S+/\d{7,11}')
     cifra = re.compile(r'\d{7,11}')
@@ -63,28 +60,34 @@ def razberi_id(povezava_do_html):
         return None
 
 
-def povezava_api_drm(povezava_do_html, številka, client_id):
+def povezava_api_drm(povezava_do_html: str,
+                     številka: str,
+                     client_id: str
+                     ) -> str:
     '''
-    vhod: URL-povezava, številka, client ID (vsi niz)
-    izhod: URL-povezava (niz)
-    vrne URL-povezavo do getRecordingDrm
+    ustvari URL-povezavo do getRecordingDrm
     '''
     povezava = (f"https://api.rtvslo.si/ava/getRecordingDrm/{številka}"
                 f"?client_id={client_id}")
     return povezava
 
 
-def povezava_api_posnetek(številka, client_id, jwt):
+def povezava_api_posnetek(številka: str,
+                          client_id: str,
+                          jwt: str
+                          ) -> str:
+    '''
+    vrne URL-povezavo do getMedia
+    '''
     povezava = (f"https://api.rtvslo.si/ava/getMedia/{številka}"
                 f"?client_id={client_id}&jwt={jwt}")
     return povezava
 
 
-def povezava_api_info(posnetek):
+def povezava_api_info(posnetek: NamedTuple
+                      ) -> str:
     '''
-    vhod: posnetek (namedtuple)
-    izhod: URL-povezava (niz)
-    vrne URL-povezavo do API getRecording
+    ustvari URL-povezavo do API getRecording
     '''
     if posnetek.številka:
         povezava = (f"https://api.rtvslo.si/ava/getRecording/"
@@ -94,10 +97,10 @@ def povezava_api_info(posnetek):
     return povezava
 
 
-def json_jwt(džejsn):
+def json_jwt(džejsn: dict
+             ) -> str:
     '''
-    vhod: JSON (dict)
-    izhod: jwt (niz)
+    razbere jwt iz JSON-a
     '''
     try:
         return džejsn['response']['jwt']
@@ -105,11 +108,10 @@ def json_jwt(džejsn):
         return None
 
 
-def json_povezava(džejsn):
+def json_povezava(džejsn: dict
+                  ) -> str:
     '''
-    vhod: JSON (dict)
-    izhod: URL-povezava (niz)
-    izlušči URL-povezavo do posnetka iz JSON-a
+    razbere URL-povezavo do posnetka iz JSON-a
     '''
     try:
         izbire = džejsn['response']['mediaFiles']
@@ -124,10 +126,11 @@ def json_povezava(džejsn):
         return izbire[0]['streams']['https']
 
 
-def odstrani_znake(beseda, nedovoljeni_znaki):
+def odstrani_znake(beseda: str,
+                   nedovoljeni_znaki: list
+                   ) -> str:
     '''
-    vhod: naslov posnetka (niz) in seznam znakov
-    izhod: naslov posnetka (niz) z odstranjenimi znaki
+    odstrani nedovoljene znake iz niza
     '''
     nedovoljeni_znaki.append(',')
     for i in nedovoljeni_znaki:
@@ -135,10 +138,12 @@ def odstrani_znake(beseda, nedovoljeni_znaki):
     return beseda
 
 
-def json_info(džejsn, povezava_do_posnetka, n):
+def json_info(džejsn: dict,
+              povezava_do_posnetka: str,
+              n: dict
+              ) -> NamedTuple:
     '''
-    vhod: JSON (dict), URL-povezava (niz), nastavitve
-    izhod: informacije (namedtuple)
+    ustvari namedtuple s informacijami o posnetku
     '''
     try:
         naslov = džejsn['response']['title'].replace(' ', '-').lower()
@@ -165,11 +170,11 @@ def json_info(džejsn, povezava_do_posnetka, n):
                 džejsn=džejsn)
 
 
-def pridobi_posnetek(url, n):
+def pridobi_posnetek(url: str,
+                     n: dict
+                     ) -> NamedTuple:
     '''
-    vhod: URL-povezava
-    izhod: informacije o posnetku (namedtuple)
-    gre za metaukaz
+    metaukaz, ki zbere podatke, potrebne za predvajanje, shranjevanje posnetka
     '''
     številka = razberi_id(url)
     client_id = n['client_id']
@@ -184,33 +189,31 @@ def pridobi_posnetek(url, n):
                     client_id=client_id)
 
 
-def zapiši_posnetek(info, cwd):
+def zapiši_posnetek(stran: requests.models.Response,
+                    info: NamedTuple,
+                    cwd: str):
     '''
-    vhod: informacije (namedtuple)
-    izhod: /
-    v datoteko zapiše posnetek
+    posnetek shrani v datoteko
     '''
-    r = pridobi_spletno_stran(info.povezava_do_posnetka)
-    with open(f'{cwd}/{info.naslov}.{info.mediatype}', 'w+b') as f:
-        f.write(r.content)
+    with open(f'{cwd}/{info.naslov}.{info.mediatype}', 'w+b') as datoteka:
+        datoteka.write(stran.content)
 
 
-def zapiši_info(info, cwd):
+def zapiši_info(info: NamedTuple,
+                cwd: str):
     '''
-    vhod: informacije (namedtuple)
-    izhod: /
     zahteve: json
-    v datoteko zapiđe informacije (JSON)
+    informacije o posnetku zapiše v datoteko
     '''
     with open(f'{cwd}/{info.naslov}.json', 'w') as datoteka:
         json.dump(info.džejsn, datoteka, indent=4, ensure_ascii=False)
 
 
-def shrani_posnetek(posnetek, n, cwd):
+def shrani_posnetek(posnetek: NamedTuple,
+                    n: dict,
+                    cwd: str):
     '''
-    vhod: informacije o posnetku (namedtuple), nastavitve, klicna mapa
-    izhod: /
-    gre za metaukaz
+    metaukaz, ki posnetek z informacijami shrani na disk
     '''
     if not posnetek.povezava_do_posnetka:
         pass
@@ -218,13 +221,14 @@ def shrani_posnetek(posnetek, n, cwd):
                      posnetek.povezava_do_posnetka,
                      n)
     zapiši_info(info, cwd)
-    zapiši_posnetek(info, cwd)
+    zapiši_posnetek((pridobi_spletno_stran(
+        info.povezava_do_posnetka)), info, cwd)
 
 
-def predvajaj_posnetek(posnetek, n, cwd=None):
+def predvajaj_posnetek(posnetek: NamedTuple,
+                       n: dict,
+                       cwd=None):
     '''
-    vhod: informacije o posnetku (namedtuple), nastavitve, klicna mapa (none)
-    izhod: /
     zahteve: subprocces
     v zunanjem predvajalniku predvaja posnetek
     '''
