@@ -60,8 +60,7 @@ def razberi_id(povezava_do_html: str
         return None
 
 
-def povezava_api_drm(povezava_do_html: str,
-                     številka: str,
+def povezava_api_drm(številka: str,
                      client_id: str
                      ) -> str:
     '''
@@ -179,7 +178,7 @@ def pridobi_posnetek(url: str,
     številka = razberi_id(url)
     client_id = n['client_id']
     jwt = json_jwt(pridobi_json(pridobi_spletno_stran(
-        povezava_api_drm(url, številka, client_id))))
+        povezava_api_drm(številka, client_id))))
     povezava_do_posnetka = json_povezava(
         pridobi_json(pridobi_spletno_stran(
             povezava_api_posnetek(številka, client_id, jwt))))
