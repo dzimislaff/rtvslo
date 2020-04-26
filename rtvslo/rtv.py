@@ -170,12 +170,14 @@ def json_info(džejsn: dict,
 
 
 def pridobi_posnetek(url: str,
-                     n: dict
+                     n: dict,
+                     številka: str = None
                      ) -> NamedTuple:
     '''
     metaukaz, ki zbere podatke, potrebne za predvajanje, shranjevanje posnetka
     '''
-    številka = razberi_id(url)
+    if not številka:
+        številka = razberi_id(url)
     client_id = n['client_id']
     jwt = json_jwt(pridobi_json(pridobi_spletno_stran(
         povezava_api_drm(številka, client_id))))

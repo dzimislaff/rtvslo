@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: 'UTF-8' -*-
 
-from sys import argv
 import pyperclip
 import rtvslo.nastavitve
 import rtvslo.rtv
+import argparse
+
 
 # za zaganjanje programa izven domače mape
 import os
@@ -12,66 +13,82 @@ CWD = os.getcwd()
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 
-IME_PROGRAMA = 'rtvslo.py'
+IME_PROGRAMA = 'rtvslo'
+
+OPIS = f'''
+Preprost program, ki dostopa do posnetkov na spletnem portalu rtvslo.si.
+
+Možnosti:
+  -s, --shrani      shrani posnetek v mapo, v kateri je bil program zagnan
+  -p, --predvajaj   predvaja posnetek v predvajalniku
+  -i, --id          ID številka posnetka
+  --pomoč           izpiše to sporočilo - pomoč
+Primer rabe:
+- predvajaj posnetek
+  {IME_PROGRAMA} -p https://4d.rtvslo.si/arhiv/zrcalo-dneva/174612420
+
+  {IME_PROGRAMA} -p --id 174612420
+
+- shrani posnetek
+  {IME_PROGRAMA} -s
+'''
+
+POMOČ = f'{IME_PROGRAMA} [-h] (-p [PREDVAJAJ] | -s [SHRANI]) [-i ID]'
+
+PRAVICE = 'Vse pravice zaščitene © Nejc 2020'
 
 
-def ukazna_vrstica():
-    '''
-    vhod: (sys.)argv
-    izhod: povezava do spletne strani in uporabnikov vnos v ukazni vrstici
-    ukaz analizira uporabnikov vnos v ukazni vrstici; v primeru neustreznega
-    ukaza izpiše sporočilo o rabi programa
-    '''
-    sporočilo_raba = f'''
-    Uporaba: {IME_PROGRAMA} [izbira] [povezava]
+def ukazi():
+    parser = argparse.ArgumentParser(
+        prog=IME_PROGRAMA,
+        usage=POMOČ,
+        description=OPIS,
+        epilog=PRAVICE,
+        formatter_class=argparse.RawTextHelpFormatter)
 
-    Za pomoč vtipkaj: {IME_PROGRAMA} --pomoč
-    '''
+    group = parser.add_mutually_exclusive_group(required=True)
 
-    sporočilo_pomoč = f'''
-    Preprost program, ki dostopa do posnetkov na spletnem portalu rtvslo.si.
+    group.add_argument('-p', '--predvajaj',
+                       action='store',
+                       type=str,
+                       nargs='?',
+                       const=1)
+    group.add_argument('-s', '--shrani',
+                       action='store',
+                       type=str,
+                       nargs='?',
+                       const=1)
+    parser.add_argument('-i', '--id',
+                        action='store',
+                        type=int)
+    return parser.parse_args()
 
-    Možnosti:
-      -s, --shrani      shrani posnetek v mapo, v kateri je bil program zagnan
-      -p, --predvajaj   predvaja posnetek v predvajalniku
-      --pomoč           izpiše to sporočilo - pomoč
 
-    Primer rabe:
-    - predvajaj posnetek
-      {IME_PROGRAMA} -p https://4d.rtvslo.si/arhiv/zrcalo-dneva/174612420
-
-    - shrani posnetek
-      {IME_PROGRAMA}
-    '''
-    pomoč = ['-h', '--help', 'pomoč', '--pomoč']
-    povezava_do_html = None
-    ukaz = rtvslo.rtv.shrani_posnetek
-    if (len(argv) == 1):
-        povezava_do_html = pyperclip.paste().lower()
-    elif (len(argv) == 2) and ('-p' in argv[1] or '-s' in argv[1]):
-        povezava_do_html = pyperclip.paste().lower()
-        if argv[1] == '-p':
-            ukaz = rtvslo.rtv.predvajaj_posnetek
-    elif argv[1] == '-p' and len(argv) == 3:
-        povezava_do_html = argv[2]
-        ukaz = rtvslo.rtv.predvajaj_posnetek
-    elif argv[1] == '-s' and len(argv) == 3:
-        povezava_do_html = argv[2]
-        ukaz = rtvslo.rtv.shrani_posnetek
-    elif len(argv) == 2 and argv[1].lower() in pomoč:
-        print(sporočilo_raba + sporočilo_pomoč)
-    else:
-        print(sporočilo_raba)
-    return (povezava_do_html, ukaz)
+def ukaz_razberi(args):
+    if args.predvajaj:
+        return (rtvslo.rtv.predvajaj_posnetek, args.predvajaj)
+    elif args.shrani:
+        return (rtvslo.rtv.shrani_posnetek, args. shrani)
 
 
 def main():
+    args = ukazi()
     n = rtvslo.nastavitve.naloži_nastavitve()
-    ukaz = ukazna_vrstica()
-    povezava_do_html = ukaz[0]
-    if povezava_do_html:
-        informacije = rtvslo.rtv.pridobi_posnetek(povezava_do_html, n)
-        ukaz[1](informacije, n, CWD)
+
+    številka = args.id
+    povezava_do_html = None
+
+    ukaz = ukaz_razberi(args)
+
+    if ((type(ukaz[1]) == str) and številka):
+        raise Exception("Hkrati sta bila podana ID posnetka in povezava.")
+    elif type(ukaz[1]) == str:
+        povezava_do_html = ukaz[1]
+    elif ((ukaz[1] == 1) and not številka):
+        povezava_do_html = pyperclip.paste().lower()
+
+    informacije = rtvslo.rtv.pridobi_posnetek(povezava_do_html, n, številka)
+    ukaz[0](informacije, n, CWD)
 
 
 if __name__ == '__main__':
