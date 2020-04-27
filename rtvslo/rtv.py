@@ -52,8 +52,8 @@ def razberi_id(povezava_do_html: str
     zahteve: re
     razbere številko posnetka z URL-povezave
     '''
-    štiride = re.compile(r'https?://4d\.rtvslo\.si/arhiv/\S+/\d{7,11}')
-    cifra = re.compile(r'\d{7,11}')
+    štiride = re.compile(r'https?://4d\.rtvslo\.si/arhiv/\S+/\d{4,11}')
+    cifra = re.compile(r'\d{4,11}')
     if štiride.search(povezava_do_html):
         return cifra.search(povezava_do_html).group()
     else:
