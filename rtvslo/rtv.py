@@ -180,10 +180,12 @@ def pridobi_posnetek(url: str,
         številka = razberi_id(url)
     client_id = n['client_id']
     jwt = json_jwt(pridobi_json(pridobi_spletno_stran(
-        povezava_api_drm(številka, client_id))))
-    povezava_do_posnetka = json_povezava(
-        pridobi_json(pridobi_spletno_stran(
-            povezava_api_posnetek(številka, client_id, jwt))))
+        povezava_api_drm(številka,
+                         client_id))))
+    povezava_do_posnetka = json_povezava(pridobi_json(pridobi_spletno_stran(
+        povezava_api_posnetek(številka,
+                              client_id,
+                              jwt))))
     return Posnetek(številka=številka,
                     jwt=jwt,
                     povezava_do_posnetka=povezava_do_posnetka,
@@ -218,12 +220,14 @@ def shrani_posnetek(posnetek: NamedTuple,
     '''
     if not posnetek.povezava_do_posnetka:
         pass
-    info = json_info(pridobi_json(povezava_api_info(posnetek)),
-                     posnetek.povezava_do_posnetka,
-                     n)
+    info = json_info(
+        pridobi_json(pridobi_spletno_stran(povezava_api_info(posnetek))),
+        posnetek.povezava_do_posnetka,
+        n)
     zapiši_info(info, cwd)
-    zapiši_posnetek((pridobi_spletno_stran(
-        info.povezava_do_posnetka)), info, cwd)
+    zapiši_posnetek((pridobi_spletno_stran(info.povezava_do_posnetka)),
+                    info,
+                    cwd)
 
 
 def predvajaj_posnetek(posnetek: NamedTuple,
