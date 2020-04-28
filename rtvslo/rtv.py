@@ -238,16 +238,23 @@ def shrani_posnetek(posnetek: NamedTuple,
     '''
     metaukaz, ki posnetek z informacijami shrani na disk
     '''
+    info = pridobi_informacije(posnetek, n, cwd)
+    zapiši_posnetek((pridobi_spletno_stran(info.povezava_do_posnetka)),
+                    info,
+                    cwd)
+
+
+def pridobi_informacije(posnetek: NamedTuple,
+                        n: dict,
+                        cwd: str):
     if not posnetek.povezava_do_posnetka:
-        pass
+        return None
     info = json_info(
         pridobi_json(pridobi_spletno_stran(povezava_api_info(posnetek))),
         posnetek.povezava_do_posnetka,
         n)
     zapiši_info(info, cwd)
-    zapiši_posnetek((pridobi_spletno_stran(info.povezava_do_posnetka)),
-                    info,
-                    cwd)
+    return info
 
 
 def predvajaj_posnetek(posnetek: NamedTuple,

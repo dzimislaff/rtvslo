@@ -58,7 +58,12 @@ def ukazi():
                        type=str,
                        nargs='?',
                        const=1)
-    parser.add_argument('-i', '--id',
+    group.add_argument('--info',
+                       action='store',
+                       type=str,
+                       nargs='?',
+                       const=1)
+    parser.add_argument('--id',
                         action='store',
                         type=int)
     return parser.parse_args()
@@ -68,7 +73,9 @@ def ukaz_razberi(args):
     if args.predvajaj:
         return (rtvslo.rtv.predvajaj_posnetek, args.predvajaj)
     elif args.shrani:
-        return (rtvslo.rtv.shrani_posnetek, args. shrani)
+        return (rtvslo.rtv.shrani_posnetek, args.shrani)
+    elif args.info:
+        return (rtvslo.rtv.pridobi_informacije, args.info)
 
 
 def main():
