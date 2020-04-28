@@ -122,7 +122,13 @@ def json_povezava(džejsn: dict
         else:
             return izbire[1]['streams']['http']
     else:
-        return izbire[0]['streams']['https']
+        try:
+            return izbire[0]['streams']['https']
+        except KeyError:
+            try:
+                return izbire[0]['streams']['http']
+            except KeyError:
+                return None
 
 
 def odstrani_znake(beseda: str,
