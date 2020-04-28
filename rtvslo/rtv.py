@@ -52,6 +52,11 @@ def razberi_id(povezava_do_html: str
     zahteve: re
     razbere številko posnetka z URL-povezave
     '''
+    try:
+        assert type(povezava_do_html) == str
+    except AssertionError:
+        return None
+
     štiride = re.compile(r'https?://4d\.rtvslo\.si/arhiv/\S+/\d{4,11}')
     cifra = re.compile(r'\d{4,11}')
     if štiride.search(povezava_do_html):
@@ -137,9 +142,18 @@ def odstrani_znake(beseda: str,
     '''
     odstrani nedovoljene znake iz niza
     '''
+    try:
+        assert type(beseda) == str
+    except AssertionError:
+        return None
+
+    beseda = beseda.replace(' ', '-')
     nedovoljeni_znaki.append(',')
     for i in nedovoljeni_znaki:
         beseda = beseda.replace(i, '')
+    while '--' in beseda:
+        beseda = beseda.replace('--', '-')
+    beseda = beseda.lstrip('-').rstrip('-')
     return beseda
 
 
@@ -151,7 +165,7 @@ def json_info(džejsn: dict,
     ustvari namedtuple s informacijami o posnetku
     '''
     try:
-        naslov = džejsn['response']['title'].replace(' ', '-').lower()
+        naslov = džejsn['response']['title'].lower()
         naslov = odstrani_znake(naslov, n['znaki'].split(','))
     except (KeyError, TypeError):
         naslov = None
