@@ -176,7 +176,7 @@ def json_info(džejsn: dict,
         mediatype = None
 
     try:
-        opis = džejsn['description']
+        opis = džejsn['response']['description']
     except KeyError:
         opis = None
     else:
@@ -239,6 +239,7 @@ def shrani_posnetek(posnetek: NamedTuple,
     metaukaz, ki posnetek z informacijami shrani na disk
     '''
     info = pridobi_informacije(posnetek, n, cwd)
+    zapiši_info(info, cwd)
     zapiši_posnetek((pridobi_spletno_stran(info.povezava_do_posnetka)),
                     info,
                     cwd)
@@ -253,7 +254,6 @@ def pridobi_informacije(posnetek: NamedTuple,
         pridobi_json(pridobi_spletno_stran(povezava_api_info(posnetek))),
         posnetek.povezava_do_posnetka,
         n)
-    zapiši_info(info, cwd)
     return info
 
 
