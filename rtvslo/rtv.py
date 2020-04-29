@@ -179,8 +179,6 @@ def json_info(džejsn: dict,
         opis = džejsn['response']['description']
     except KeyError:
         opis = None
-    else:
-        print(opis)
 
     return Info(naslov=naslov,
                 mediatype=mediatype,
