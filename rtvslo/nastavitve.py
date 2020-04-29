@@ -3,10 +3,8 @@
 
 import configparser
 import os
+from pathlib import Path
 
-
-# za zaganjanje programa izven domače mape
-os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 client_id = '82013fb3a531d5414f478747c1aca622'
 session_id = '5cc765368952d4.22094713.245769764'
@@ -17,9 +15,11 @@ def ustvari_nastavitve(config, ime_datoteke='nastavitve.ini'):
     client_id = input('Vnesite identifikacijsko številko uporabnika.\n')
     session_id = input('Vnesite identifikacijsko število seje.\n')
     naslov = input('Vnesite lokacijo shrambe.\n')
-    predvajalnik = input('Vnestite ime predvajalnika (npr.: mpv).')
-    možnosti = input(
-        'Vnesite dodatne možnosti za predvajalnik (npr.: --force-window)')
+
+    # TODO
+    # predvajalnik = input('Vnestite ime predvajalnika (npr.: mpv).')
+    # možnosti = input(
+    #     'Vnesite dodatne možnosti za predvajalnik (npr.: --force-window)')
 
     config['PROGRAM'] = {'lokacija': lokacija}
 
@@ -28,15 +28,17 @@ def ustvari_nastavitve(config, ime_datoteke='nastavitve.ini'):
 
     config['SHRAMBA'] = {'naslov': naslov}
 
+    # TODO
     # nastavek za predvajanje posnetka
     # config['PREDVAJANJE'] = {'predvajalnik': predvajalnik,
     #                          'možnosti': možnosti_predvajalnika}
-
+    ime_datoteke = Path(__file__).parent / ime_datoteke
     with open(ime_datoteke, 'w') as f:
         config.write(f)
 
 
 def naloži_nastavitve(ime_datoteke='nastavitve.ini'):
+    ime_datoteke = Path(__file__).parent / ime_datoteke
     config = configparser.ConfigParser()
     config.read(ime_datoteke)
 
@@ -49,7 +51,7 @@ def naloži_nastavitve(ime_datoteke='nastavitve.ini'):
 
 
 def main():
-    ime_datoteke = 'nastavitve.ini'
+    ime_datoteke = Path(__file__).parent / 'nastavitve.ini'
     config = configparser.ConfigParser()
 
     if not os.path.exists(ime_datoteke):
