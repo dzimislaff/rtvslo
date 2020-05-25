@@ -9,6 +9,9 @@ seznam = [
     ('https://4d.rtvslo.si/arhiv/dokumentarni-filmi-in-oddaje-kulturno-umetniski-program/174369897'),
     ('https://4d.rtvslo.si/arhiv/prvi-na-maturi/174688153'),
     ('https://4d.rtvslo.si/arhiv/meje-mojega-jezika-niso-meje-mojega-sveta/109826798'),
+    ('https://ars.rtvslo.si/2020/05/esej-na-radiu-200/'),
+    ('https://radioprvi.rtvslo.si/2020/05/eppur-si-muove-in-vendar-se-vrti-213/'),
+    ('https://val202.rtvslo.si/2020/05/koncert-doma-zmelkoow/'),
     #
     # nedelujoče
     # opis: assert type(info.opis) == str (test_pridobi_informacije)
