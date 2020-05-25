@@ -59,8 +59,17 @@ def razberi_id(povezava_do_html: str
 
     štiride = re.compile(r'https?://4d\.rtvslo\.si/arhiv/\S+/\d{4,11}')
     cifra = re.compile(r'\d{4,11}')
+    erteve = re.compile(r'https?://(ars|radioprvi|val202)\.rtvslo\.si/.+')
     if štiride.search(povezava_do_html):
-        return cifra.search(povezava_do_html).group()
+        povezava = štiride.search(povezava_do_html).group()
+        return cifra.search(povezava).group()
+    elif erteve.search(povezava_do_html):
+        try:
+            povezava = štiride.search(
+                pridobi_spletno_stran(povezava_do_html).text).group()
+            return cifra.search(povezava).group()
+        except AttributeError:
+            return None
     else:
         return None
 
