@@ -219,14 +219,19 @@ def pridobi_posnetek(url: str,
                     client_id=client_id)
 
 
-def zapiši_posnetek(stran: requests.models.Response,
-                    info: NamedTuple,
+def zapiši_posnetek(povezava_do_posnetka: str,
+                    naslov: str,
+                    shranjevalnik: str,
                     cwd: str):
     '''
+    zahteva: youtube-dl
     posnetek shrani v datoteko
     '''
-    with open(f'{cwd}/{info.naslov}.{info.mediatype}', 'w+b') as datoteka:
-        datoteka.write(stran.content)
+    subprocess.call([shranjevalnik,
+                     '-o',
+                     f'{naslov}.%(ext)s',
+                     povezava_do_posnetka],
+                    cwd=cwd)
 
 
 def zapiši_info(info: NamedTuple,
@@ -247,8 +252,9 @@ def shrani_posnetek(posnetek: NamedTuple,
     '''
     info = pridobi_informacije(posnetek, n, cwd)
     zapiši_info(info, cwd)
-    zapiši_posnetek((pridobi_spletno_stran(info.povezava_do_posnetka)),
-                    info,
+    zapiši_posnetek(posnetek.povezava_do_posnetka,
+                    info.naslov,
+                    n['shranjevalnik'],
                     cwd)
 
 
