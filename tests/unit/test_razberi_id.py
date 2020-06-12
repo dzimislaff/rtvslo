@@ -17,7 +17,7 @@ pari = [
     ([123, 'sdf'], None),
     ({'a': 2353}, None),
     (('llk', 345435), None),
-    ('https://ars.rtvslo.si/2020/05/esej-na-radiu-200/', '174695579'),
+    # ('https://ars.rtvslo.si/2020/05/esej-na-radiu-200/', '174695579'),
     ('https://radioprvi.rtvslo.si/2020/05/eppur-si-muove-in-vendar-se-vrti-213/', '174695499'),
     ('https://val202.rtvslo.si/2020/05/koncert-doma-zmelkoow/', '174694953'),
 ]
