@@ -205,6 +205,8 @@ def pridobi_posnetek(url: str,
     '''
     if not številka:
         številka = razberi_id(url)
+        if not številka:
+            return None
     client_id = n['client_id']
     jwt = json_jwt(pridobi_json(pridobi_spletno_stran(
         povezava_api_drm(številka,
@@ -250,12 +252,16 @@ def shrani_posnetek(posnetek: NamedTuple,
     '''
     metaukaz, ki posnetek z informacijami shrani na disk
     '''
-    info = pridobi_informacije(posnetek, n, cwd)
-    zapiši_info(info, cwd)
-    zapiši_posnetek(posnetek.povezava_do_posnetka,
-                    info.naslov,
-                    n['shranjevalnik'],
-                    cwd)
+    if not posnetek:
+        print("Posnetek ni na voljo.")
+        pass
+    else:
+        info = pridobi_informacije(posnetek, n, cwd)
+        zapiši_info(info, cwd)
+        zapiši_posnetek(posnetek.povezava_do_posnetka,
+                        info.naslov,
+                        n['shranjevalnik'],
+                        cwd)
 
 
 def pridobi_informacije(posnetek: NamedTuple,
@@ -277,7 +283,9 @@ def predvajaj_posnetek(posnetek: NamedTuple,
     zahteve: subprocces
     v zunanjem predvajalniku predvaja posnetek
     '''
-    if not posnetek.povezava_do_posnetka:
+    if not posnetek:
+        pass
+    elif not posnetek.povezava_do_posnetka:
         pass
     else:
         subprocess.call([n['predvajalnik'],
