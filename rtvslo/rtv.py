@@ -131,16 +131,16 @@ def json_povezava(džejsn: dict
     except KeyError:
         return None
     if len(izbire) == 2:
-        if izbire[0]['height'] > izbire[1]['height']:
-            return izbire[0]['streams']['hls']
+        if izbire[0]['bitrate'] > izbire[1]['bitrate']:
+            return izbire[0]['streams']['http']
         else:
-            return izbire[1]['streams']['hls']
+            return izbire[1]['streams']['http']
     else:
         try:
             return izbire[0]['streams']['https']
         except KeyError:
             try:
-                return izbire[0]['streams']['hls']
+                return izbire[0]['streams']['http']
             except KeyError:
                 return None
 
