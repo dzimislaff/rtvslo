@@ -6,41 +6,27 @@ import os
 from pathlib import Path
 
 
-client_id = '82013fb3a531d5414f478747c1aca622'
-session_id = '5cc765368952d4.22094713.245769764'
+def ustvari_nastavitve(config,
+                       ime_datoteke: str = 'nastavitve.ini'):
+    client_id = input("Vnesite identifikacijsko številko uporabnika.\n")
+    predvajalnik = input("Vnesite ime predvajalnika (npr.: mpv).\n")
+    možnosti_predvajalnika = input(
+        "Vnesite dodatne možnosti za predvajalnik (npr.: --force-window)\n")
+    shranjevalnik = input("Vnesite ime shranjevalnika (npr. youtube-dl")
 
-
-def ustvari_nastavitve(config, ime_datoteke='nastavitve.ini'):
-    lokacija = os.getcwd()
-    client_id = input('Vnesite identifikacijsko številko uporabnika.\n')
-    session_id = input('Vnesite identifikacijsko število seje.\n')
-    naslov = input('Vnesite lokacijo shrambe.\n')
-
-    # TODO
-    # predvajalnik = input('Vnestite ime predvajalnika (npr.: mpv).')
-    # možnosti = input(
-    #     'Vnesite dodatne možnosti za predvajalnik (npr.: --force-window)')
-
-    config['PROGRAM'] = {'lokacija': lokacija}
-
-    config['DOSTOP'] = {'client_id': client_id,
-                        'session_id': session_id}
-
-    config['SHRAMBA'] = {'naslov': naslov}
-
-    # TODO
-    # nastavek za predvajanje posnetka
-    # config['PREDVAJANJE'] = {'predvajalnik': predvajalnik,
-    #                          'možnosti': možnosti_predvajalnika}
+    config["DOSTOP"] = {"client_id": client_id}
+    config["PREDVAJANJE"] = {"predvajalnik": predvajalnik,
+                             "možnosti predvajalnika": možnosti_predvajalnika}
+    config["SHRANJEVANJE"] = {"shranjevalnik": shranjevalnik}
     ime_datoteke = Path(__file__).parent / ime_datoteke
-    with open(ime_datoteke, 'w') as f:
+    with open(ime_datoteke, "w") as f:
         config.write(f)
 
 
-def naloži_nastavitve(ime_datoteke='nastavitve.ini'):
+def naloži_nastavitve(ime_datoteke="nastavitve.ini"):
     ime_datoteke = Path(__file__).parent / ime_datoteke
     config = configparser.ConfigParser()
-    config.read(ime_datoteke)
+    config.read(ime_datoteke, encoding="utf-8")
 
     nastavitve = {}
 
@@ -51,19 +37,19 @@ def naloži_nastavitve(ime_datoteke='nastavitve.ini'):
 
 
 def main():
-    ime_datoteke = Path(__file__).parent / 'nastavitve.ini'
+    ime_datoteke = Path(__file__).parent / "nastavitve.ini"
     config = configparser.ConfigParser()
 
     if not os.path.exists(ime_datoteke):
-        print('Nisem našel nastavitev. Morate jih ustvariti.')
+        print("Nisem našel nastavitev. Morate jih ustvariti.")
         ustvari_nastavitve(config)
 
     else:
-        print(f'''Upoštevam obstoječe nastavitve v datoteki \
-{os.getcwd()}/{ime_datoteke}.\nČe želite ustvariti novo datoteko z \
+        print(f"""Upoštevam obstoječe nastavitve v datoteki \
+{ime_datoteke}.\nČe želite ustvariti novo datoteko z \
 nastavitvami, najprej izbrišite obstoječo datoteko z ukazom: \n\trm \
-{os.getcwd()}/{ime_datoteke} \nNato ponovno zaženite program.
-            ''')
+{ime_datoteke} \nNato ponovno zaženite program.
+            """)
 
 
 if __name__ == '__main__':
