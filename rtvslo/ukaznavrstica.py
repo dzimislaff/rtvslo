@@ -9,29 +9,30 @@ import os
 from __version__ import __version__
 
 
-IME_PROGRAMA = 'rtvslo'
+IME_PROGRAMA = "rtvslo"
 
-OPIS = f'''
+OPIS = f"""
 Preprost program, ki dostopa do posnetkov na spletnem portalu rtvslo.si.
 
 Možnosti:
   shrani        shrani posnetek v mapo, v kateri je bil program zagnan
   predvajaj     predvaja posnetek v predvajalniku
-  -i, --id      ID številka posnetka
-  --pomoč       izpiše to sporočilo - pomoč
+  --id          ID številka posnetka
+  --pomoč       izpiše to sporočilo – pomoč
+
 Primer rabe:
-- predvajaj posnetek
-  {IME_PROGRAMA} -p https://4d.rtvslo.si/arhiv/zrcalo-dneva/174612420
+– predvajaj posnetek
+  {IME_PROGRAMA} predvajaj https://4d.rtvslo.si/arhiv/zrcalo-dneva/174612420
 
-  {IME_PROGRAMA} -p --id 174612420
+  {IME_PROGRAMA} predvajaj --id 174612420
 
-- shrani posnetek
-  {IME_PROGRAMA} -s
-'''
+– shrani posnetek
+  {IME_PROGRAMA} shrani
+"""
 
-POMOČ = f'{IME_PROGRAMA} [-h] (-p [PREDVAJAJ] | -s [SHRANI]) [-i ID]'
+POMOČ = f"{IME_PROGRAMA} [-h] [--verzija] predvajaj/shrani [--id]"
 
-PRAVICE = 'Vse pravice zaščitene © Nejc 2021'
+PRAVICE = "Vse pravice zaščitene © Nejc 2021"
 
 
 def ukazi():
