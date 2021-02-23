@@ -10,7 +10,7 @@ from setuptools import setup, find_packages
 import __version__
 
 različica_programa = __version__.__version__
-ime_programa = "vremenko"
+ime_programa = "rtvslo"
 opis_programa = ("Preprost program, ki dostopa do posnetkov na spletnem "
                  "portalu rtvslo.si.")
 spletna_povezava = "https://github.com/dzimislaff/rtvslo"
