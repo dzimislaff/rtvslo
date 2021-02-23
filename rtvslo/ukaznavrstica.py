@@ -1,16 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: 'UTF-8' -*-
 
-import pyperclip
+import argparse
+import rtvslo.beležka
 import rtvslo.nastavitve
 import rtvslo.rtv
-import argparse
-
-
-# za zaganjanje programa izven domače mape
 import os
-CWD = os.getcwd()
-os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 
 IME_PROGRAMA = 'rtvslo'
@@ -19,10 +14,10 @@ OPIS = f'''
 Preprost program, ki dostopa do posnetkov na spletnem portalu rtvslo.si.
 
 Možnosti:
-  -s, --shrani      shrani posnetek v mapo, v kateri je bil program zagnan
-  -p, --predvajaj   predvaja posnetek v predvajalniku
-  -i, --id          ID številka posnetka
-  --pomoč           izpiše to sporočilo - pomoč
+  shrani        shrani posnetek v mapo, v kateri je bil program zagnan
+  predvajaj     predvaja posnetek v predvajalniku
+  -i, --id      ID številka posnetka
+  --pomoč       izpiše to sporočilo - pomoč
 Primer rabe:
 - predvajaj posnetek
   {IME_PROGRAMA} -p https://4d.rtvslo.si/arhiv/zrcalo-dneva/174612420
@@ -35,7 +30,7 @@ Primer rabe:
 
 POMOČ = f'{IME_PROGRAMA} [-h] (-p [PREDVAJAJ] | -s [SHRANI]) [-i ID]'
 
-PRAVICE = 'Vse pravice zaščitene © Nejc 2020'
+PRAVICE = 'Vse pravice zaščitene © Nejc 2021'
 
 
 def ukazi():
@@ -46,57 +41,45 @@ def ukazi():
         epilog=PRAVICE,
         formatter_class=argparse.RawTextHelpFormatter)
 
-    group = parser.add_mutually_exclusive_group(required=True)
+    subparsers = parser.add_subparsers(dest="ukaz")
+    subparsers.required = True
 
-    group.add_argument('-p', '--predvajaj',
-                       action='store',
-                       type=str,
-                       nargs='?',
-                       const=1)
-    group.add_argument('-s', '--shrani',
-                       action='store',
-                       type=str,
-                       nargs='?',
-                       const=1)
-    group.add_argument('--info',
-                       action='store',
-                       type=str,
-                       nargs='?',
-                       const=1)
-    parser.add_argument('--id',
-                        action='store',
-                        type=int)
-    return parser.parse_args()
+    parser_predvajaj = subparsers.add_parser("predvajaj")
+    parser_predvajaj.add_argument("povezava", nargs="?", default=None)
+    parser_predvajaj.add_argument("--id", action="store", type=int)
+
+    parser_shrani = subparsers.add_parser("shrani")
+    parser_shrani.add_argument("povezava", nargs="?", default=None)
+    parser_shrani.add_argument("--id", action="store", type=int)
+
+    return (parser.parse_args(),  # ukaz
+            parser)               # parser
 
 
-def ukaz_razberi(args):
-    if args.predvajaj:
-        return (rtvslo.rtv.predvajaj_posnetek, args.predvajaj)
-    elif args.shrani:
-        return (rtvslo.rtv.shrani_posnetek, args.shrani)
-    elif args.info:
-        return (rtvslo.rtv.pridobi_informacije, args.info)
+def ukaznavrstica():
+    izbrani_ukazi = ukazi()
+    ukaz = izbrani_ukazi[0]
+    parser = izbrani_ukazi[1]
 
+    if not ukaz.povezava and not ukaz.id:
+        ukaz.povezava = rtvslo.beležka.beležka()
+    elif ukaz.povezava and ukaz.id:
+        parser.error("Hkrati sta bila podana povezava in ID posnetka.")
 
-def main():
-    args = ukazi()
-    n = rtvslo.nastavitve.naloži_nastavitve()
+    nastavitve = rtvslo.nastavitve.naloži_nastavitve()
+    posnetek = rtvslo.rtv.Posnetek(povezava_do_html=ukaz.povezava,
+                                   nastavitve=nastavitve,
+                                   številka=ukaz.id)
 
-    številka = args.id
-    povezava_do_html = None
+    if ukaz.ukaz == "predvajaj":
+        posnetek.predvajaj()
+    elif ukaz.ukaz == "shrani":
+        # za zaganjanje programa izven domače mape
+        CWD = os.getcwd()
+        os.chdir(os.path.dirname(os.path.realpath(__file__)))  # je to nujno?
 
-    ukaz = ukaz_razberi(args)
-
-    if ((type(ukaz[1]) == str) and številka):
-        raise Exception("Hkrati sta bila podana ID posnetka in povezava.")
-    elif type(ukaz[1]) == str:
-        povezava_do_html = ukaz[1]
-    elif ((ukaz[1] == 1) and not številka):
-        povezava_do_html = pyperclip.paste().lower()
-
-    informacije = rtvslo.rtv.pridobi_posnetek(povezava_do_html, n, številka)
-    ukaz[0](informacije, n, CWD)
+        posnetek.shrani(CWD)
 
 
 if __name__ == '__main__':
-    main()
+    ukaznavrstica()
