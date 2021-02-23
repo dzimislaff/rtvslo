@@ -6,6 +6,7 @@ import rtvslo.beležka
 import rtvslo.nastavitve
 import rtvslo.rtv
 import os
+from __version__ import __version__
 
 
 IME_PROGRAMA = 'rtvslo'
@@ -40,6 +41,9 @@ def ukazi():
         description=OPIS,
         epilog=PRAVICE,
         formatter_class=argparse.RawTextHelpFormatter)
+
+    parser.add_argument("--verzija", action="version",
+                        version="%(prog)s {version}".format(version=__version__))
 
     subparsers = parser.add_subparsers(dest="ukaz")
     subparsers.required = True
