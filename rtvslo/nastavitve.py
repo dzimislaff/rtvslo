@@ -45,11 +45,10 @@ def main():
         ustvari_nastavitve(config)
 
     else:
-        print(f"""Upoštevam obstoječe nastavitve v datoteki \
-{ime_datoteke}.\nČe želite ustvariti novo datoteko z \
-nastavitvami, najprej izbrišite obstoječo datoteko z ukazom: \n\trm \
-{ime_datoteke} \nNato ponovno zaženite program.
-            """)
+        print(f"Upoštevam obstoječe nastavitve v datoteki {ime_datoteke}"
+              ".\nČe želite ustvariti novo datoteko z nastavitvami, najprej "
+              f"izbrišite obstoječo datoteko z ukazom: \n\trm {ime_datoteke} "
+              "\nNato ponovno zaženite program.")
 
 
 if __name__ == '__main__':
