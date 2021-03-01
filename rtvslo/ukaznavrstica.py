@@ -80,10 +80,10 @@ def ukaznavrstica():
         posnetek.predvajaj()
     elif ukaz.ukaz == "shrani":
         # za zaganjanje programa izven domače mape
-        CWD = os.getcwd()
+        cwd = os.getcwd()
         os.chdir(os.path.dirname(os.path.realpath(__file__)))  # je to nujno?
 
-        posnetek.shrani(CWD)
+        posnetek.shrani(cwd)
 
 
 if __name__ == '__main__':
