@@ -11,6 +11,7 @@ class NeveljavnaPovezava(Exception):  # TODO premakni v exceptions.py
     """ neveljavna HTML-povezava """
     pass
 
+
 class Posnetek:
 
     štiride = re.compile(r"https?://4d\.rtvslo\.si/arhiv/\S+/(\d{4,11})")
@@ -21,11 +22,19 @@ class Posnetek:
                  nastavitve: dict,
                  številka: int = None,
                  api_info: dict = None,
+                 povezava_do_posnetka = None,
+                 jwt = None,
+                 html = None,
+                 naslov = None
                  ):
         self.povezava_do_html = povezava_do_html
         self.nastavitve = nastavitve
         self.številka = številka
         self.api_info = api_info
+        self.povezava_do_posnetka = povezava_do_posnetka
+        self.jwt = jwt
+        self.html = html
+        self.naslov = naslov
         if not self.številka and not self.preveri_html_povezavo(povezava_do_html):
             raise NeveljavnaPovezava
 
@@ -119,9 +128,9 @@ class Posnetek:
     def validacija_povezave(self,
                             povezava: str
                             ) -> str:
-        def test_povezave(povezava: str
+        def test_povezave(url: str
                           ) -> bool:
-            if "dummy" in povezava:
+            if "dummy" in url:
                 return True
 
         if test_povezave(povezava):
