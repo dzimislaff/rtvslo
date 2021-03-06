@@ -171,7 +171,7 @@ class Posnetek:
         beseda = beseda.replace(" ", "-")
         nedovoljeni_znaki.append(",")
         for i in nedovoljeni_znaki:
-            beseda = beseda.replace(i, "")
+            beseda = beseda.replace(i, "").replace("–", "-")
         while "--" in beseda:
             beseda = beseda.replace("--", "-")
         beseda = beseda.lstrip("-").rstrip("-")
