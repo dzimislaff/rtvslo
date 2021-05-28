@@ -72,18 +72,26 @@ def ukaznavrstica():
         parser.error("Hkrati sta bila podana povezava in ID posnetka.")
 
     nastavitve = rtvslo.nastavitve.naloži_nastavitve()
-    posnetek = rtvslo.rtv.Posnetek(povezava_do_html=ukaz.povezava,
-                                   nastavitve=nastavitve,
-                                   številka=ukaz.id)
-
-    if ukaz.ukaz == "predvajaj":
-        posnetek.predvajaj()
-    elif ukaz.ukaz == "shrani":
-        # za zaganjanje programa izven domače mape
-        cwd = os.getcwd()
-        os.chdir(os.path.dirname(os.path.realpath(__file__)))  # je to nujno?
-
-        posnetek.shrani(cwd)
+    try:
+        posnetek = rtvslo.rtv.Posnetek(povezava_do_html=ukaz.povezava,
+                                       nastavitve=nastavitve,
+                                       številka=ukaz.id)
+    except rtvslo.rtv.NeveljavnaPovezava:
+        print("Povezava je neveljavna.")
+    else:
+        if ukaz.ukaz == "predvajaj":
+            try:
+                posnetek.predvajaj()
+            except rtvslo.rtv.NeveljavnaPovezava:
+                print("Povezava je neveljavna.")
+        elif ukaz.ukaz == "shrani":
+            # za zaganjanje programa izven domače mape
+            cwd = os.getcwd()
+            os.chdir(os.path.dirname(os.path.realpath(__file__)))  # je to nujno?
+            try:
+                posnetek.shrani(cwd)
+            except rtvslo.rtv.NeveljavnaPovezava:
+                print("Povezava je neveljavna.")
 
 
 if __name__ == '__main__':

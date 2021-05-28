@@ -135,7 +135,10 @@ class Posnetek:
 
         if test_povezave(povezava):
             mp3 = re.compile(r"mp3\\\":\\\"(\S+mp3)")
-            return mp3.search(self.html).group(1)
+            try:
+                return mp3.search(self.html).group(1)
+            except AttributeError:
+                raise NeveljavnaPovezava("nekaj")
         else:
             return povezava
 
