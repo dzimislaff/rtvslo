@@ -1,14 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: 'UTF-8' -*-
 
-# import requests
 from lxml import html
 import os
 import sys
 import rtvslo.rtv
 import rtvslo.nastavitve
-
-# povezava_do_podcasta = "https://ars.rtvslo.si/odprta-knjiga/"
 
 
 def pridobi_seznam_povezav(povezava_do_podcasta: str):
@@ -22,11 +19,17 @@ def pridobi_seznam_povezav(povezava_do_podcasta: str):
 
 def main(povezava_do_podcasta: str):
     nastavitve = rtvslo.nastavitve.naloži_nastavitve()
-    cwd = os.getcwd()
+    try:
+        cwd = sys.argv[2]
+    except IndexError:
+        cwd = os.getcwd()
     povezave = pridobi_seznam_povezav(povezava_do_podcasta)
     for povezava in povezave:
         posnetek = rtvslo.rtv.Posnetek(povezava, nastavitve)
-        posnetek.shrani(cwd)
+        try:
+            posnetek.shrani(cwd)
+        except rtvslo.rtv.NeveljavnaPovezava:
+            pass
 
 
 if __name__ == '__main__':
