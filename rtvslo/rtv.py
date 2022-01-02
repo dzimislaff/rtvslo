@@ -22,10 +22,10 @@ class Posnetek:
                  nastavitve: dict,
                  številka: int = None,
                  api_info: dict = None,
-                 povezava_do_posnetka = None,
-                 jwt = None,
-                 html = None,
-                 naslov = None
+                 povezava_do_posnetka=None,
+                 jwt=None,
+                 html=None,
+                 naslov=None
                  ):
         self.povezava_do_html = povezava_do_html
         self.nastavitve = nastavitve
@@ -84,9 +84,10 @@ class Posnetek:
                 f"?client_id={self.nastavitve['client_id']}")
 
     @staticmethod
-    def pridobi_json(stran
+    def pridobi_json(stran,
+                     kazalo: str = "response"
                      ) -> dict:
-        return json.loads(stran.text)["response"]
+        return json.loads(stran.text)[kazalo]
 
     def pridobi_jwt(self):
         self.pridobi_api_info()
@@ -130,7 +131,8 @@ class Posnetek:
                             ) -> str:
         def test_povezave(url: str
                           ) -> bool:
-            if "dummy" in url:
+            napačni = ("expired", "dummy")
+            if any(x in url for x in napačni):
                 return True
 
         if test_povezave(povezava):
