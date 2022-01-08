@@ -14,7 +14,7 @@ class NeveljavnaPovezava(Exception):  # TODO premakni v exceptions.py
 
 class Posnetek:
 
-    štiride = re.compile(r"https?://4d\.rtvslo\.si/arhiv/\S+/(\d{4,11})")
+    štiride = re.compile(r"https?://(4d|365)\.rtvslo\.si/arhiv/\S+/(\d{4,11})")
     erteve = re.compile(r"https?://(ars|radioprvi|val202)\.rtvslo\.si/.+")
 
     def __init__(self,
@@ -65,7 +65,7 @@ class Posnetek:
 
     def razberi_številko(self):
         if self.štiride.search(self.povezava_do_html):
-            return self.štiride.search(self.povezava_do_html).group(1)
+            return self.štiride.search(self.povezava_do_html).group(2)
         elif self.erteve.search(self.povezava_do_html):
             self.html = self.pridobi_spletno_stran(self.povezava_do_html).text
             try:
