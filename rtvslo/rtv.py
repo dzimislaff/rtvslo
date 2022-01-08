@@ -69,7 +69,7 @@ class Posnetek:
         elif self.erteve.search(self.povezava_do_html):
             self.html = self.pridobi_spletno_stran(self.povezava_do_html).text
             try:
-                return self.štiride.search(self.html).group(1)
+                return self.štiride.search(self.html).group(2)
             except AttributeError:
                 return  # TODO logging
 
