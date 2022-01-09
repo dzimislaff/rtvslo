@@ -11,9 +11,16 @@ import rtvslo.nastavitve
 def pridobi_seznam_povezav(povezava_do_podcasta: str):
     r = rtvslo.rtv.Posnetek.pridobi_spletno_stran(povezava_do_podcasta)
     stran = html.fromstring(r.content)
-    konci_povezav = stran.xpath(
-        '//h3[@class="post-excerpt__body__title"]/a//@href')
-    povezave = [f"https://ars.rtvslo.si{i}" for i in konci_povezav]
+    ključi = {
+        "ars": '//h3[@class="post-excerpt__body__title"]/a//@href',
+        "365": '//h3[@class="title-cut-4-rows"]/a//@href'
+    }
+    if "ars" in povezava_do_podcasta:
+        konci_povezav = stran.xpath(ključi["ars"])
+        povezave = [f"https://ars.rtvslo.si{i}" for i in konci_povezav]
+    elif "365." in povezava_do_podcasta:
+        konci_povezav = stran.xpath(ključi["365"])
+        povezave = [f"https://365.rtvslo.si{i}" for i in konci_povezav]
     return povezave
 
 
