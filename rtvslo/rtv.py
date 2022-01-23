@@ -14,7 +14,7 @@ class NeveljavnaPovezava(Exception):  # TODO premakni v exceptions.py
 
 class Posnetek:
 
-    štiride = re.compile(r"https?://(4d|365)\.rtvslo\.si/arhiv/\S+/(\d{4,11})")
+    štiride = re.compile(r"https?://(4d|365)\.rtvslo\.si/\S+/(\d{4,11})")
     erteve = re.compile(r"https?://(ars|radioprvi|val202)\.rtvslo\.si/.+")
 
     def __init__(self,
