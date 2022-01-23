@@ -64,9 +64,9 @@ class Posnetek:
             self.številka = self.razberi_številko()
 
     def razberi_številko(self):
-        if self.štiride.search(self.povezava_do_html):
-            return self.štiride.search(self.povezava_do_html).group(2)
-        elif self.erteve.search(self.povezava_do_html):
+        if ujemanje := self.štiride.search(self.povezava_do_html):
+            return ujemanje.group(2)
+        else:  # erteve
             self.html = self.pridobi_spletno_stran(self.povezava_do_html).text
             try:
                 return self.štiride.search(self.html).group(2)
