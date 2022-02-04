@@ -12,6 +12,11 @@ class NeveljavnaPovezava(Exception):  # TODO premakni v exceptions.py
     pass
 
 
+class BrezNastavitev(Exception):  # TODO premakni v exceptions.py
+    """ manjkajo nastavitve """
+    pass
+
+
 class Posnetek:
 
     štiride = re.compile(r"https?://(4d|365)\.rtvslo\.si/\S+/(\d{4,11})")
@@ -19,13 +24,13 @@ class Posnetek:
 
     def __init__(self,
                  povezava_do_html: str,
-                 nastavitve: dict,
+                 nastavitve: dict = None,
                  številka: int = None,
                  api_info: dict = None,
-                 povezava_do_posnetka=None,
-                 jwt=None,
-                 html=None,
-                 naslov=None
+                 povezava_do_posnetka: str = None,
+                 jwt: str = None,
+                 html: str = None,
+                 naslov: str = None
                  ):
         self.povezava_do_html = povezava_do_html
         self.nastavitve = nastavitve
@@ -35,23 +40,30 @@ class Posnetek:
         self.jwt = jwt
         self.html = html
         self.naslov = naslov
-        if not self.številka and not self.preveri_html_povezavo(povezava_do_html):
+
+    def validacija_povezave(self):
+        povezava = self.preveri_html_povezavo(self.povezava_do_html)
+        if not self.številka and not povezava:
             raise NeveljavnaPovezava
 
-    def preveri_html_povezavo(self,
-                              povezava_do_html: str
+    @staticmethod
+    def preveri_html_povezavo(povezava_do_html: str
                               ) -> bool:
         try:
             assert type(povezava_do_html) == str
         except AssertionError:
             return  # TODO logging
 
-        if self.štiride.search(povezava_do_html):
+        if Posnetek.štiride.search(povezava_do_html):
             return True
-        elif self.erteve.search(povezava_do_html):
+        elif Posnetek.erteve.search(povezava_do_html):
             return True
 
-    @staticmethod
+    def preveri_nastavitve(self):
+        if not self.nastavitve:
+            raise BrezNastavitev
+
+    @ staticmethod
     def pridobi_spletno_stran(naslov: str
                               ) -> requests.models.Response:
         try:
@@ -76,7 +88,7 @@ class Posnetek:
     def pridobi_api_info(self):
         if not self.api_info:
             self.api_info = self.pridobi_json(self.pridobi_spletno_stran(
-                self.povezava_api_info()))
+                self.povezava_api_info()).text)
 
     def povezava_api_info(self
                           ) -> str:
@@ -84,10 +96,10 @@ class Posnetek:
                 f"?client_id={self.nastavitve['client_id']}")
 
     @staticmethod
-    def pridobi_json(stran,
+    def pridobi_json(stran: str,
                      kazalo: str = "response"
                      ) -> dict:
-        return json.loads(stran.text)[kazalo]
+        return json.loads(stran)[kazalo]
 
     def pridobi_jwt(self):
         self.pridobi_api_info()
@@ -102,8 +114,11 @@ class Posnetek:
 
     def pridobi_povezavo(self):
         povezava = self.json_povezava(self.pridobi_json(
-            self.pridobi_spletno_stran(self.povezava_api_posnetek())))
-        self.povezava_do_posnetka = self.validacija_povezave(povezava)
+            self.pridobi_spletno_stran(self.povezava_api_posnetek()).text))
+        if not self.validacija_povezave_do_posnetka(povezava):
+            self.povezava_do_posnetka = povezava
+        else:
+            self.povezava_do_posnetka = self.poišči_povezavo_v_htmlju()
 
     @staticmethod
     def json_povezava(džejsn: dict
@@ -126,23 +141,20 @@ class Posnetek:
                 except KeyError:
                     return  # TODO logging
 
-    def validacija_povezave(self,
-                            povezava: str
-                            ) -> str:
-        def test_povezave(url: str
-                          ) -> bool:
-            napačni = ("expired", "dummy")
-            if any(x in url for x in napačni):
-                return True
+    @staticmethod
+    def validacija_povezave_do_posnetka(povezava: str
+                                        ) -> bool:
+        napačni = ("expired", "dummy")
+        if any(i in povezava for i in napačni):
+            return True
 
-        if test_povezave(povezava):
-            mp3 = re.compile(r"mp3\\\":\\\"(\S+mp3)")
-            try:
-                return mp3.search(self.html).group(1)
-            except AttributeError:
-                raise NeveljavnaPovezava("nekaj")
-        else:
-            return povezava
+    def poišči_povezavo_v_htmlju(self
+                                 ) -> str:
+        mp3 = re.compile(r"mp3\\\":\\\"(\S+mp3)")
+        try:
+            return mp3.search(self.html).group(1)
+        except AttributeError:
+            raise NeveljavnaPovezava("nekaj")
 
     def povezava_api_posnetek(self
                               ) -> str:
@@ -206,6 +218,8 @@ class Posnetek:
                          self.nastavitve["možnosti"]])
 
     def start(self):
+        self.validacija_povezave()
+        self.preveri_nastavitve()
         self.pridobi_številko()
         self.pridobi_jwt()
         self.pridobi_povezavo()
