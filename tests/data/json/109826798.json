@@ -1,0 +1,63 @@
+{
+    "response":
+    {
+        "thumbnail_sec": "https://img.rtvcdn.si/_up/ava/ava_misc/channel_logos/SLO1.jpg",
+        "source": "SLO1",
+        "linkedShows":
+        [],
+        "description": "Dokumentarna oddaja, 3., zadnji del",
+        "broadcastDate": "2011-07-05 17:30:00",
+        "id": 109826798,
+        "recordingDate": "2011-07-05 17:30:00",
+        "payTv":
+        [],
+        "expirationDate": "3001-01-01 00:00:00",
+        "showDescription": "Zavod za gluhe in naglušne Ljubljana, osrednja državna ustanova za vzgojo, izobraževanje in specialno pedagoško obravnavo gluhih in naglušnih otrok in mladostnikov ter oseb z govorno- jezikovnimi motnjami je praznoval 110. obletnico delovanja. Pesnik Tone Pavček je gojencem in sodelavcem ZGNL ob tej priložnosti spesnil praznično pesem:\r\n»Duh ni nikoli gluh,\r\nkamor želi si, sega,\r\ns prsti lomi besedni kruh in glagol ŽIVETI sprega.«\r\nOb tej priložnosti so nastale v Izobraževalnem programu nacionalne televizije tri dokumentarno-izobraževalne oddaje, v katerih so predstavljene dejavnosti Zavoda, ki izobražuje in vzgaja otroke in mladostnike od obdobja, ko je njihova motnja diagnosticirana, do zaključka izobraževanja na srednji šoli. Specialni pedagogi in vzgojitelji želijo doseči optimalen razvoj otrokovih sposobnosti na vseh področjih izobraževanja, poseben poudarek pa namenjajo razvoju jezika (slovenskega in slovenskega znakovnega jezika), komunikacije sluha in govora. Z najmlajšimi v vrtcu in osnovni šoli, z mladostniki v srednji šoli (edini srednji šoli za gluhe in naglušne v Sloveniji) in tudi odraslimi v okviru dejavnosti, ki jih Zavod vodi v Zdravstveni enoti tudi v širšem slovenskem okolju.\r\nVse te dejavnosti na različnih stopnjah šolanja so predstavljene v oddajah, ki so posebne tudi zaradi skrbne popolne opreme sleherne od njih. S podnapisi, evropsko standardizirano optimalno velikostjo podobe tolmača s kretanjem vsega govorjenega besedila in odprtim sodelovanjem učencev in strokovnih sodelavcev Zavoda za gluhe in naglušne Ljubljana pri nastajanju dokumentarcev. Zato le-ti odsevajo prijazno okolje, nasmejane utrinke življenja v vrtcu, šoli, prostorih prostočasovnih dejavnosti od knjižnice, do telovadnice in igralnic.",
+        "showId": "173250539",
+        "publishDate": "1991-01-01 00:00:00",
+        "showTypeId": 33,
+        "mediaType": "video",
+        "title": "Ljubica Podboršek, dobra vila slovenskega znakovnega jezika",
+        "showName": "Meje mojega jezika niso meje mojega sveta",
+        "jwt": "u6_tipF6VscwzDpzOOGhjifQwo_QaxmXw8j4ElJFiGc",
+        "broadcast":
+        {
+            "genre":
+            [],
+            "genreIds":
+            []
+        },
+        "broadcastDates":
+        [],
+        "duration": 1959,
+        "images":
+        {
+            "orig": "https://img.rtvcdn.si/_up/ava/ava_misc/channel_logos/SLO1.jpg",
+            "fp1": "https://img.rtvcdn.si/_up/ava/ava_misc/channel_logos/SLO1_fp1.jpg",
+            "fp2": "https://img.rtvcdn.si/_up/ava/ava_misc/channel_logos/SLO1_fp2.jpg",
+            "fp3": "https://img.rtvcdn.si/_up/ava/ava_misc/channel_logos/SLO1_fp3.jpg",
+            "thumb": "https://img.rtvcdn.si/_up/ava/ava_misc/channel_logos/SLO1_thumb.jpg",
+            "show": "https://img.rtvcdn.si/_up/ava/ava_misc/channel_logos/SLO1_show.jpg",
+            "wide1": "https://img.rtvcdn.si/_up/ava/ava_misc/channel_logos/SLO1_wide1.jpg",
+            "wide2": "https://img.rtvcdn.si/_up/ava/ava_misc/channel_logos/SLO1_wide2.jpg"
+        },
+        "length_min": 32,
+        "length_h": "32:39",
+        "length": "00:32:39",
+        "date": "05.07.2011",
+        "date_slo": "5. 7. 2011",
+        "stub": "meje-mojega-jezika-niso-meje-mojega-sveta",
+        "link": "https://4d.rtvslo.si/arhiv/meje-mojega-jezika-niso-meje-mojega-sveta/109826798",
+        "showLink": "https://4d.rtvslo.si/oddaja/meje-mojega-jezika-niso-meje-mojega-sveta/173250539",
+        "showLinkBySource": "https://www.rtvslo.si/tv/oddaja/meje-mojega-jezika-niso-meje-mojega-sveta/173250539",
+        "canonical":
+        {
+            "domain": "https://365.rtvslo.si",
+            "path": "/arhiv/meje-mojega-jezika-niso-meje-mojega-sveta/109826798"
+        },
+        "show_stats": 0,
+        "user_ip": "93.103.250.36",
+        "user_id": false,
+        "broadcastDisc": 0
+    }
+}
