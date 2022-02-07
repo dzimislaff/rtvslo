@@ -128,12 +128,15 @@ class Posnetek:
         except KeyError:
             return  # TODO logging
         if len(izbire) > 1:
+            # seznam ločljivosti
             vrednosti = [izbira["height"] for izbira in izbire]
+            # najde pozicijo posnetka z najvišjo ločljivostjo
+            # TODO izbira ločljivosti
             pozicija = vrednosti.index(max(vrednosti))
-            if izbire[pozicija]["streams"]["hls"]:
-                return izbire[pozicija]["streams"]["hls"]
-            elif izbire[pozicija]["streams"]["hls_sec"]:
+            if izbire[pozicija]["streams"]["hls_sec"]:
                 return izbire[pozicija]["streams"]["hls_sec"]
+            elif izbire[pozicija]["streams"]["hls"]:
+                return izbire[pozicija]["streams"]["hls"]
         else:
             try:
                 return izbire[0]["streams"]["https"]
