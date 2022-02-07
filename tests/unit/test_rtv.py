@@ -118,7 +118,7 @@ def povezava_do_posnetka_365():
     hls_sec
     ostale: hls, hls-360. hls_sec-360
     """
-    return r'http://vodstr.rtvslo.si/encrypted11/_definst_/2022/01/23/Sofia_Goggia_e_vedno_upa_na_nastop_na_olimpijskih_igrah_2022-01-23-100855-SLO1.mp4/playlist.m3u8?keylockhash=Hc3G77Udti1OP94LdvB6ddzK0rfiPU6_AcV6-mZ3dC8'
+    return r'https://vodstr.rtvslo.si/encrypted11/_definst_/2022/01/23/Sofia_Goggia_e_vedno_upa_na_nastop_na_olimpijskih_igrah_2022-01-23-100855-SLO1.mp4/playlist.m3u8?keylockhash=Hc3G77Udti1OP94LdvB6ddzK0rfiPU6_AcV6-mZ3dC8'
 
 
 @pytest.fixture
@@ -141,6 +141,52 @@ def test_json_jwt_365(json_365, jwt_365):
 def test_json_povezava_365(džejsn_api_365, povezava_do_posnetka_365, posnetek):
     assert posnetek.json_povezava(
         posnetek.pridobi_json(džejsn_api_365)) == povezava_do_posnetka_365
+
+# 365_1080 #######################################################################
+
+
+@pytest.fixture
+def džejsn_365_1080():
+    """
+    174841952.json
+    """
+    return r'{"response":{"broadcastDates":["2022-02-06 20:20:00"],"broadcast":{"idec":"P-1033871-000-0000-002","scriptwriter":"Hočevar Miha, Koljević Srdjan, Luzar Matevž","parentalGuidance":5,"director":"Luzar Matevž","production":"SloAV","genreIds":[120,12030,1203090],"genre":["IGRANE VSEBINE","NADALJEVANKE IN NANIZANKE","Kriminalne nadaljevanke in nanizanke"]},"duration":2741,"jwt":"CkwEotY4Du6LwTzsI156OKlAOhnzZCC1TleXgw86Xbw","showName":"Dolina rož","title":"Dolina rož, slovenska nadaljevanka, 2/3","showTypeId":15890841,"mediaType":"video","publishDate":"2022-02-06 21:09:54","subtitles":[{"file":"https://img.rtvcdn.si/_up/ava/ava_misc/subs/2022/02/06/IGR-DOLINAROZ-20220201-002--LP-SLO--A1A2-Z1K1G1S1-F1.vtt","format":"VTT","language":"Slovenski"}],"showThumbnail":"https://img.rtvcdn.si/_up/ava/ava_misc/show_logos/173251400/logo.jpg","expirationDate":"2022-02-27 20:00:00","payTv":[],"showDescription":"V Dolini rož spremljamo prvi primer Tarasa Birse v vlogi zasebnega detektiva. Njegova prva delodajalka, zapeljiva arhitektka Klara Zupet, ga najame, da zasleduje novo ženo svojega ostarelega očeta. Primer se dokaj hitro konča s trojnim umorom, Taras pa postane glavni osumljenec. Spremembe pa se zgodijo tudi na policijski postaji: medtem ko sta Taras in Tina izbrala nove karierne poti, šef pisarne postane introvertirani in ambiciozni Ahlin, za katerega se zdi, da želi Tarasa za vsako ceno spraviti za zapahe. Taras ne postane le začasna Ahlinova tarča, v iskanju pravice nehote dregne v skrbno prikrivane skrivnosti, za kar skoraj plača z svojim življenjem.\r\n\r\nScenarij po knjižni predlogi Tadeja Goloba: Matevž Luzar, Miha Hočevar, Srdjan Koljević // Režija: Matevž Luzar // Igrajo: Sebastian Cavazza, Saša Tabaković, Iva Krajnc Bagola, Nika Rozman, Gregor Čušin, Matej Puc, Jana Zupančič, Ivo Barišič, Maja Pinterič, Metod Pevec, Ivo Ban, Primož Vrhovec, Gaja Filač, …\r\n","showId":"173251400","description":"Dogodek pred Tarasovo hišo resno ogrozi mirno življenje njegove družine in razkrije, da je Taras v primer treh umorov vpleten bolj, kot se zdi na prvi pogled.\r\nAhlin prejme mamljivo ponudbo za karierno napredovanje, pod pogojem, da mu uspe hitro rešiti primer. Kljub vsem prizadevanjem in pritiskom na sodelavce pa še vedno ne odkrijejo niti najbolj osnovne informacije – zaporedja smrti umorjenih. V ospredje pa vse bolj prihaja biografija, ki jo je s pomočjo novinarja pisal premožni vplivnež Zupet. Ko Mihelič Tarasu ponudi visoko vsoto denarja v zameno za biografijo, Taras posumi, da bi bile v ozadju umorov lahko zamere iz preteklosti. \r\n","broadcastDate":"2022-02-06 20:20:00","recordingDate":"2022-02-05 16:50:02","id":174845696,"source":"SLO1","thumbnails_sec":[{"author":null,"thumbnail-1":"https://img.rtvcdn.si/_up/ftp/tvpfoto/12315866557/12315893046/P2.jpg"},{"thumbnail-2":"https://img.rtvcdn.si/_up/ftp/tvpfoto/12315866557/Poster.jpg","author":null},{"thumbnail-3":"https://img.rtvcdn.si/_up/ftp/tvpfoto/12315866557/12315893046/Main.jpg","author":null},{"author":null,"thumbnail-4":"https://img.rtvcdn.si/_up/ftp/tvpfoto/12315866557/12315893046/P3.jpg"},{"thumbnail-5":"https://img.rtvcdn.si/_up/ftp/tvpfoto/12315866557/12315893046/P4.jpg","author":null}],"thumbnail_sec":"https://img.rtvcdn.si/_up/ftp/tvpfoto/12315866557/12315893046/Main.jpg","thumbnails":[{"author":null,"thumbnail-1":"https://img.rtvcdn.si/_up/ftp/tvpfoto/12315866557/12315893046/P2.jpg"},{"author":null,"thumbnail-2":"https://img.rtvcdn.si/_up/ftp/tvpfoto/12315866557/Poster.jpg"},{"author":null,"thumbnail-3":"https://img.rtvcdn.si/_up/ftp/tvpfoto/12315866557/12315893046/Main.jpg"},{"author":null,"thumbnail-4":"https://img.rtvcdn.si/_up/ftp/tvpfoto/12315866557/12315893046/P3.jpg"},{"thumbnail-5":"https://img.rtvcdn.si/_up/ftp/tvpfoto/12315866557/12315893046/P4.jpg","author":null}],"linkedShows":[],"images":{"orig":"https://img.rtvcdn.si/_up/ftp/tvpfoto/12315866557/12315893046/Main.jpg","fp1":"https://img.rtvcdn.si/_up/ftp/tvpfoto/12315866557/12315893046/Main_fp1.jpg","fp2":"https://img.rtvcdn.si/_up/ftp/tvpfoto/12315866557/12315893046/Main_fp2.jpg","fp3":"https://img.rtvcdn.si/_up/ftp/tvpfoto/12315866557/12315893046/Main_fp3.jpg","thumb":"https://img.rtvcdn.si/_up/ftp/tvpfoto/12315866557/12315893046/Main_thumb.jpg","show":"https://img.rtvcdn.si/_up/ftp/tvpfoto/12315866557/12315893046/Main_show.jpg","wide1":"https://img.rtvcdn.si/_up/ftp/tvpfoto/12315866557/12315893046/Main_wide1.jpg","wide2":"https://img.rtvcdn.si/_up/ftp/tvpfoto/12315866557/12315893046/Main_wide2.jpg"},"length_min":45,"length_h":"45:41","length":"00:45:41","date":"06.02.2022","date_slo":"6. 2. 2022","stub":"dolina-roz","link":"https://4d.rtvslo.si/arhiv/dolina-roz/174845696","showLink":"https://4d.rtvslo.si/oddaja/dolina-roz/173251400","showLinkBySource":"https://www.rtvslo.si/tv/oddaja/dolina-roz/173251400","canonical":{"domain":"https://365.rtvslo.si","path":"/arhiv/dolina-roz/174845696"},"show_stats":0,"user_ip":"93.103.250.36","user_id":false,"recommended_count":"1","broadcastDisc":0}}'
+
+
+@pytest.fixture
+def džejsn_api_365_1080():
+    return r'{"response":{"mediaFiles_sl":[],"mediaFiles":[{"filesize":779145589,"width":1920,"height":1080,"bitrate":2270000,"mediaType":"MP4","id":175226264,"streams":{"hls_sec":"https://vodstr.rtvslo.si/encrypted11/_definst_/2022/02/05/IGR-DOLINAROZ-20220201-002--LP-SLO--A1A2-Z1K1G1S1-F1_0.mp4/playlist.m3u8?keylockhash=ZNeHoTSfBeGPOxxuJ9vFaZlYhcbj6EqIFSnIPyXmORM","hls":"http://vodstr.rtvslo.si/encrypted11/_definst_/2022/02/05/IGR-DOLINAROZ-20220201-002--LP-SLO--A1A2-Z1K1G1S1-F1_0.mp4/playlist.m3u8?keylockhash=ZNeHoTSfBeGPOxxuJ9vFaZlYhcbj6EqIFSnIPyXmORM"}},{"bitrate":1130000,"mediaType":"MP4","streams":{"hls_sec":"https://vodstr.rtvslo.si/encrypted11/_definst_/2022/02/05/IGR-DOLINAROZ-20220201-002--LP-SLO--A1A2-Z1K1G1S1-F1_1.mp4/playlist.m3u8?keylockhash=1Cn1w8TXvas9qLZbvHKz6PmMnk_dhPe-gXumcz0hdVY","hls":"http://vodstr.rtvslo.si/encrypted11/_definst_/2022/02/05/IGR-DOLINAROZ-20220201-002--LP-SLO--A1A2-Z1K1G1S1-F1_1.mp4/playlist.m3u8?keylockhash=1Cn1w8TXvas9qLZbvHKz6PmMnk_dhPe-gXumcz0hdVY"},"id":175226265,"filesize":389158766,"height":720,"width":1280},{"bitrate":451000,"mediaType":"MP4","id":175226266,"streams":{"hls":"http://vodstr.rtvslo.si/encrypted11/_definst_/2022/02/05/IGR-DOLINAROZ-20220201-002--LP-SLO--A1A2-Z1K1G1S1-F1_2.mp4/playlist.m3u8?keylockhash=9YYDEIS4mDhYtMhPCt9Oq2ETtFKuXIYW5RM68CeB3Ac","hls_sec":"https://vodstr.rtvslo.si/encrypted11/_definst_/2022/02/05/IGR-DOLINAROZ-20220201-002--LP-SLO--A1A2-Z1K1G1S1-F1_2.mp4/playlist.m3u8?keylockhash=9YYDEIS4mDhYtMhPCt9Oq2ETtFKuXIYW5RM68CeB3Ac"},"filesize":156316502,"width":640,"height":360}],"addaptiveMedia":{"hls":"http://vodstr.rtvslo.si/encrypted11/_definst_/2022/02/05/174845696.smil/playlist.m3u8?keylockhash=wGGxSVWFOgzii21D6eQNNDOX0LjTfpl0Fwp8KNmoMBA","hls_sec":"https://vodstr.rtvslo.si/encrypted11/_definst_/2022/02/05/174845696.smil/playlist.m3u8?keylockhash=wGGxSVWFOgzii21D6eQNNDOX0LjTfpl0Fwp8KNmoMBA"}}}'
+
+
+@pytest.fixture
+def povezava_do_posnetka_365_1080():
+    """
+    hls_sec
+    ostale: hls, hls-360. hls_sec-360
+    """
+    return r'https://vodstr.rtvslo.si/encrypted11/_definst_/2022/02/05/IGR-DOLINAROZ-20220201-002--LP-SLO--A1A2-Z1K1G1S1-F1_0.mp4/playlist.m3u8?keylockhash=ZNeHoTSfBeGPOxxuJ9vFaZlYhcbj6EqIFSnIPyXmORM'
+
+
+@pytest.fixture
+def jwt_365_1080():
+    return "CkwEotY4Du6LwTzsI156OKlAOhnzZCC1TleXgw86Xbw"
+
+
+@pytest.fixture
+def json_365_1080(džejsn_365_1080, posnetek):
+    posnetek.api_info = posnetek.pridobi_json(džejsn_365_1080)
+    return posnetek
+
+
+def test_json_jwt_365_1080(json_365_1080, jwt_365_1080):
+    posnetek = json_365_1080
+    posnetek.jwt = posnetek.json_jwt()
+    assert posnetek.jwt == jwt_365_1080
+
+
+def test_json_povezava_365_1080(džejsn_api_365_1080, povezava_do_posnetka_365_1080, posnetek):
+    assert posnetek.json_povezava(
+        posnetek.pridobi_json(džejsn_api_365_1080)) == povezava_do_posnetka_365_1080
 
 # ars ########################################################################
 

@@ -14,6 +14,7 @@ delujoče = [
     'https://val202.rtvslo.si/2020/05/koncert-doma-zmelkoow/',
     'https://365.rtvslo.si/arhiv/jezero/174660165',
     'https://365.rtvslo.si/arhiv/sport/174841952',
+    'https://365.rtvslo.si/arhiv/dolina-roz/174845696',
     'https://ars.rtvslo.si/2021/09/druga-jutranja-kronika-708/',
     'https://ars.rtvslo.si/2021/11/oder-342/',
 
