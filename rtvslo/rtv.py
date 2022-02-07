@@ -127,11 +127,13 @@ class Posnetek:
             izbire = džejsn["mediaFiles"]
         except KeyError:
             return  # TODO logging
-        if len(izbire) == 2:
-            if izbire[0]["bitrate"] > izbire[1]["bitrate"]:
-                return izbire[0]["streams"]["hls_sec"]
-            else:
-                return izbire[1]["streams"]["hls"]
+        if len(izbire) > 1:
+            vrednosti = [izbira["height"] for izbira in izbire]
+            pozicija = vrednosti.index(max(vrednosti))
+            if izbire[pozicija]["streams"]["hls"]:
+                return izbire[pozicija]["streams"]["hls"]
+            elif izbire[pozicija]["streams"]["hls_sec"]:
+                return izbire[pozicija]["streams"]["hls_sec"]
         else:
             try:
                 return izbire[0]["streams"]["https"]

@@ -118,7 +118,7 @@ def povezava_do_posnetka_365():
     hls_sec
     ostale: hls, hls-360. hls_sec-360
     """
-    return r'https://vodstr.rtvslo.si/encrypted11/_definst_/2022/01/23/Sofia_Goggia_e_vedno_upa_na_nastop_na_olimpijskih_igrah_2022-01-23-100855-SLO1.mp4/playlist.m3u8?keylockhash=Hc3G77Udti1OP94LdvB6ddzK0rfiPU6_AcV6-mZ3dC8'
+    return r'http://vodstr.rtvslo.si/encrypted11/_definst_/2022/01/23/Sofia_Goggia_e_vedno_upa_na_nastop_na_olimpijskih_igrah_2022-01-23-100855-SLO1.mp4/playlist.m3u8?keylockhash=Hc3G77Udti1OP94LdvB6ddzK0rfiPU6_AcV6-mZ3dC8'
 
 
 @pytest.fixture
