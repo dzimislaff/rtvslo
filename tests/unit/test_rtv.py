@@ -23,7 +23,7 @@ def test_preveri_html_napačne(povezava):
 def test_razberi_številko(povezava):
     posnetek = rtvslo.rtv.Posnetek(povezava)
     številka = posnetek.razberi_številko()
-    assert type(številka) is str
+    assert isinstance(številka, str)
     assert len(številka) == 9
 
 
@@ -49,9 +49,8 @@ def posnetek():
     return rtvslo.rtv.Posnetek("")
 
 
+@pytest.mark.parametrize("džejsn_api, povezava_do_posnetka", [])
 # 4d #########################################################################
-
-
 @pytest.fixture
 def džejsn_4d():
     """
@@ -95,6 +94,10 @@ def test_json_povezava_4d(džejsn_api_4d, povezava_do_posnetka_4d, posnetek):
     assert posnetek.json_povezava(
         posnetek.pridobi_json(džejsn_api_4d)) == povezava_do_posnetka_4d
 
+
+def test_validacija_povezave_do_posnetka_4d(povezava_do_posnetka_4d):
+    assert rtvslo.rtv.Posnetek.validacija_povezave_do_posnetka(
+        povezava_do_posnetka_4d) is None
 
 # 365 #######################################################################
 

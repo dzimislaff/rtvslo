@@ -50,7 +50,7 @@ class Posnetek:
     def preveri_html_povezavo(povezava_do_html: str
                               ) -> bool:
         try:
-            assert type(povezava_do_html) == str
+            assert isinstance(povezava_do_html, str)
         except AssertionError:
             return  # TODO logging
 
@@ -186,7 +186,7 @@ class Posnetek:
         odstrani nedovoljene znake iz niza znakov
         """
         try:
-            assert type(beseda) == str
+            assert isinstance(beseda, str)
         except AssertionError:
             return  # TODO logging
 
