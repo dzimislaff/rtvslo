@@ -19,7 +19,7 @@ class BrezNastavitev(Exception):  # TODO premakni v exceptions.py
 
 class Posnetek:
 
-    štiride = re.compile(r"https?://(4d|365)\.rtvslo\.si/\S+/(\d{4,11})")
+    štiride = re.compile(r"https?://(4d|365|www)\.rtvslo\.si/\S+/(\d{4,11})")
     erteve = re.compile(r"https?://(ars|radioprvi|val202)\.rtvslo\.si/.+")
 
     def __init__(self,
@@ -119,6 +119,9 @@ class Posnetek:
             self.povezava_do_posnetka = povezava
         else:
             self.povezava_do_posnetka = self.poišči_povezavo_v_htmlju()
+            if "mp3" not in self.povezava_do_posnetka:
+                self.številka = self.povezava_do_posnetka
+                self.pridobi_povezavo()
 
     @staticmethod
     def json_povezava(džejsn: dict
@@ -155,11 +158,19 @@ class Posnetek:
 
     def poišči_povezavo_v_htmlju(self
                                  ) -> str:
+        if not self.html:
+            self.html = self.pridobi_spletno_stran(self.povezava_do_html).text
         mp3 = re.compile(r"mp3\\\":\\\"(\S+mp3)")
-        try:
-            return mp3.search(self.html).group(1)
-        except AttributeError:
-            raise NeveljavnaPovezava("nekaj")
+        mmc = re.compile(r"data-recording=\"(\d{4,11})\"")
+        if niz := mp3.search(self.html):
+            return niz.group(1)
+        # elif niz := self.štiride.search(self.html):
+        elif niz := mmc.search(self.html):
+            return niz.group(1)
+        # try:
+        #     return mp3.search(self.html).group(1)
+        # except AttributeError:
+        #     raise NeveljavnaPovezava("nekaj")
 
     def povezava_api_posnetek(self
                               ) -> str:
