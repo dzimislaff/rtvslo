@@ -15,11 +15,12 @@ delujoče = [
     'https://365.rtvslo.si/arhiv/jezero/174660165',
     'https://365.rtvslo.si/arhiv/sport/174841952',
     'https://365.rtvslo.si/arhiv/dolina-roz/174845696',
-    'https://ars.rtvslo.si/2021/09/druga-jutranja-kronika-708/',
-    'https://ars.rtvslo.si/2021/11/oder-342/',
+    'https://ars.rtvslo.si/podkast/ocene/173250873/174883150'
 
     #
     # nedelujoče
+    # 'https://ars.rtvslo.si/2021/11/oder-342/',
+    # 'https://ars.rtvslo.si/2021/09/druga-jutranja-kronika-708/',
     # ('https://4d.rtvslo.si/arhiv/slovenski-film/60911866'),
     # ('https://ars.rtvslo.si/2020/05/esej-na-radiu-200/'),
     #
