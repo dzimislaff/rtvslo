@@ -20,7 +20,7 @@ class BrezNastavitev(Exception):  # TODO premakni v exceptions.py
 class Posnetek:
 
     štiride = re.compile(r"https?://(4d|365|www)\.rtvslo\.si/\S+/(\d{4,11})")
-    erteve = re.compile(r"https?://(ars|radioprvi|val202)\.rtvslo\.si/.+")
+    erteve = re.compile(r"https?://(ars|prvi|val202)\.rtvslo\.si/.+")
 
     def __init__(self,
                  povezava_do_html: str,
@@ -167,6 +167,8 @@ class Posnetek:
         # elif niz := self.štiride.search(self.html):
         elif niz := mmc.search(self.html):
             return niz.group(1)
+        # else:
+        #     return ""
         # try:
         #     return mp3.search(self.html).group(1)
         # except AttributeError:

@@ -10,7 +10,7 @@ delujoče = [
     'https://4d.rtvslo.si/arhiv/dokumentarni-filmi-in-oddaje-kulturno-umetniski-program/174369897',
     'https://4d.rtvslo.si/arhiv/prvi-na-maturi/174688153',
     'https://4d.rtvslo.si/arhiv/meje-mojega-jezika-niso-meje-mojega-sveta/109826798',
-    'https://radioprvi.rtvslo.si/2020/05/eppur-si-muove-in-vendar-se-vrti-213/',
+    'https://prvi.rtvslo.si/podkast/eppur-si-muove-in-vendar-se-vrti/2688377/174695499',
     'https://val202.rtvslo.si/2020/05/koncert-doma-zmelkoow/',
     'https://365.rtvslo.si/arhiv/jezero/174660165',
     'https://365.rtvslo.si/arhiv/sport/174841952',
@@ -21,6 +21,7 @@ delujoče = [
     # nedelujoče
     # 'https://ars.rtvslo.si/2021/11/oder-342/',
     # 'https://ars.rtvslo.si/2021/09/druga-jutranja-kronika-708/',
+    # 'https://radioprvi.rtvslo.si/2020/05/eppur-si-muove-in-vendar-se-vrti-213/',
     # ('https://4d.rtvslo.si/arhiv/slovenski-film/60911866'),
     # ('https://ars.rtvslo.si/2020/05/esej-na-radiu-200/'),
     #

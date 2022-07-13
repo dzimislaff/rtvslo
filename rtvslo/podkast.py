@@ -14,10 +14,11 @@ def pridobi_seznam_povezav(povezava_do_podkasta: str
     def ustvari_povezave(ujemanje: str,
                          stran: html.HtmlElement
                          ) -> list:
-        radijski_ključ = '//h3[@class="post-excerpt__body__title"]/a//@href'
+        # radijski_ključ = '//h3[@class="post-excerpt__body__title"]/a//@href'
+        radijski_ključ = '//h4[@class="h4"]/a//@href'
         ključi = {
             "ars": radijski_ključ,
-            "radioprvi": radijski_ključ,
+            "prvi": radijski_ključ,
             "val202": radijski_ključ,
             "365": '//h3[@class="title-cut-4-rows"]/a//@href'
         }
