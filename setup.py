@@ -15,8 +15,8 @@ opis_programa = ("Preprost program, ki dostopa do posnetkov na spletnem "
                  "portalu rtvslo.si.")
 spletna_povezava = "https://github.com/dzimislaff/rtvslo"
 email = "nejc.mobilc@gmail.com"
-avtor = "nejc"
-različica_pythona = "!=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*, >=3.6.0"
+avtor = "Nejc"
+različica_pythona = "!=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*, !=3.6.*, !=3.7.*, >=3.8.0"
 zahtevani_moduli = [
     "requests"
 ]
@@ -44,10 +44,9 @@ setup(
         # https://pypi.python.org/pypi?%3Aaction=list_classifiers
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Natural Language :: Slovenian,"
     ],
 )
