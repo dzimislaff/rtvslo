@@ -20,7 +20,7 @@ class BrezNastavitev(Exception):  # TODO premakni v exceptions.py
 class Posnetek:
 
     štiride = re.compile(r"https?://(4d|365|www)\.rtvslo\.si/\S+/(\d{4,11})")
-    erteve = re.compile(r"https?://(ars|prvi|val202)\.rtvslo\.si/.+")
+    radio = re.compile(r"https?://(ars|prvi|val202)\.rtvslo\.si/.+")
 
     def __init__(self,
                  povezava_do_html: str,
@@ -56,7 +56,7 @@ class Posnetek:
 
         if Posnetek.štiride.search(povezava_do_html):
             return True
-        elif Posnetek.erteve.search(povezava_do_html):
+        elif Posnetek.radio.search(povezava_do_html):
             return True
 
     def preveri_nastavitve(self):
@@ -78,7 +78,7 @@ class Posnetek:
     def razberi_številko(self):
         if ujemanje := self.štiride.search(self.povezava_do_html):
             return ujemanje.group(2)
-        else:  # erteve
+        else:  # radio
             self.html = self.pridobi_spletno_stran(self.povezava_do_html).text
             try:
                 return self.štiride.search(self.html).group(2)
@@ -167,12 +167,6 @@ class Posnetek:
         # elif niz := self.štiride.search(self.html):
         elif niz := mmc.search(self.html):
             return niz.group(1)
-        # else:
-        #     return ""
-        # try:
-        #     return mp3.search(self.html).group(1)
-        # except AttributeError:
-        #     raise NeveljavnaPovezava("nekaj")
 
     def povezava_api_posnetek(self
                               ) -> str:
