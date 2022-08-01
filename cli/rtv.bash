@@ -11,7 +11,7 @@ _rtv()
     #
     #  The basic options we'll complete.
     #
-    opts="predvajaj shrani"
+    opts="predvajaj shrani izpiši"
 
     #
     #  Complete the arguments to some of the basic commands.
@@ -23,6 +23,11 @@ _rtv()
             return 0
             ;;
         shrani)
+            local names="$(wl-paste) --id"
+            COMPREPLY=( $(compgen -W "${names}" -- ${cur}) )
+            return 0
+            ;;
+        izpiši)
             local names="$(wl-paste) --id"
             COMPREPLY=( $(compgen -W "${names}" -- ${cur}) )
             return 0

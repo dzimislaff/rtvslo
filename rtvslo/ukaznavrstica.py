@@ -57,6 +57,10 @@ def ukazi():
     parser_shrani.add_argument("povezava", nargs="?", default=None)
     parser_shrani.add_argument("--id", action="store", type=int)
 
+    parser_izpiši = subparsers.add_parser("izpiši")
+    parser_izpiši.add_argument("povezava", nargs="?", default=None)
+    parser_izpiši.add_argument("--id", action="store", type=int)
+
     return (parser.parse_args(),  # ukaz
             parser)               # parser
 
@@ -87,9 +91,16 @@ def ukaznavrstica():
         elif ukaz.ukaz == "shrani":
             # za zaganjanje programa izven domače mape
             cwd = os.getcwd()
-            os.chdir(os.path.dirname(os.path.realpath(__file__)))  # je to nujno?
+            # je to nujno?
+            os.chdir(os.path.dirname(os.path.realpath(__file__)))
             try:
                 posnetek.shrani(cwd)
+            except rtvslo.rtv.NeveljavnaPovezava:
+                print("Povezava je neveljavna.")
+        elif ukaz.ukaz == "izpiši":
+            try:
+                posnetek.start()
+                print(posnetek.povezava_do_posnetka)
             except rtvslo.rtv.NeveljavnaPovezava:
                 print("Povezava je neveljavna.")
 
