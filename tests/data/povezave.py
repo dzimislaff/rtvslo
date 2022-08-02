@@ -10,12 +10,30 @@ delujoče = [
     'https://4d.rtvslo.si/arhiv/dokumentarni-filmi-in-oddaje-kulturno-umetniski-program/174369897',
     'https://4d.rtvslo.si/arhiv/prvi-na-maturi/174688153',
     'https://4d.rtvslo.si/arhiv/meje-mojega-jezika-niso-meje-mojega-sveta/109826798',
-    'https://prvi.rtvslo.si/podkast/eppur-si-muove-in-vendar-se-vrti/2688377/174695499',
-    'https://val202.rtvslo.si/2020/05/koncert-doma-zmelkoow/',
     'https://365.rtvslo.si/arhiv/jezero/174660165',
     'https://365.rtvslo.si/arhiv/sport/174841952',
     'https://365.rtvslo.si/arhiv/dolina-roz/174845696',
-    'https://ars.rtvslo.si/podkast/ocene/173250873/174883150'
+    # radijske povezave
+    'https://prvi.rtvslo.si/podkast/eppur-si-muove-in-vendar-se-vrti/2688377/174695499',
+    'https://ars.rtvslo.si/podkast/ocene/173250873/174883150',
+    'https://val202.rtvslo.si/2020/05/koncert-doma-zmelkoow/',
+    # v živo: TV
+    'https://365.rtvslo.si/vzivo/tvs1',
+    'https://365.rtvslo.si/vzivo/tvs2',
+    'https://365.rtvslo.si/vzivo/tvs3',
+    'https://365.rtvslo.si/vzivo/tvmb',
+    'https://365.rtvslo.si/vzivo/tvkp',
+    'https://365.rtvslo.si/vzivo/tvmmc',
+    # v živo: radio
+    'https://365.rtvslo.si/vzivo/prvi',
+    'https://365.rtvslo.si/vzivo/val202',
+    'https://365.rtvslo.si/vzivo/ars',
+    'https://365.rtvslo.si/vzivo/ramb',
+    'https://365.rtvslo.si/vzivo/rakp',
+    'https://365.rtvslo.si/vzivo/capo',
+    'https://365.rtvslo.si/vzivo/mmr',
+    'https://365.rtvslo.si/vzivo/sport202',
+    'https://365.rtvslo.si/vzivo/raz',
 
     #
     # nedelujoče

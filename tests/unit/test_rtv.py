@@ -24,7 +24,10 @@ def test_razberi_številko(povezava):
     posnetek = rtvslo.rtv.Posnetek(povezava)
     številka = posnetek.razberi_številko()
     assert isinstance(številka, str)
-    assert len(številka) == 9
+    assert any((
+        (len(številka) == 9),  # arhivski posnetki
+        2 <= len(številka) <= 8),  # posnetki v živo
+    )
 
 
 @pytest.mark.parametrize("povezava", tests.data.povezave.neustrezne)
