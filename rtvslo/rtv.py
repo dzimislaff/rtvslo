@@ -19,13 +19,32 @@ class BrezNastavitev(Exception):  # TODO premakni v exceptions.py
 
 class Posnetek:
 
-    štiride = re.compile(r"https?://(4d|365|www)\.rtvslo\.si/\S+/(\d{4,11})")
-    radio = re.compile(r"https?://(ars|prvi|val202)\.rtvslo\.si/.+")
+    štiride = re.compile(
+        r"https?:\/\/(4d|365|www)\.rtvslo\.si\/\S+\/(\d{4,11})")
+    radio = re.compile(r"https?:\/\/(ars|prvi|val202)\.rtvslo\.si\/.+")
+    v_živo = re.compile(r"https?:\/\/365\.rtvslo\.si\/vzivo\/(\w{3,8})")
+    seznam_v_živo = {"tvs1": ("tv", "slo1"),
+                     "tvs2": ("tv", "slo2"),
+                     "tvs3": ("tv", "slo3"),
+                     "tvmb": ("tv", "mb1"),
+                     "tvkp": ("tv", "kp1"),
+                     "tvmmc": ("tv", "mmctv"),
+                     "prvi": ("ra", "a1"),
+                     "val202": ("ra", "val202"),
+                     "ars": ("ra", "ars"),
+                     "rsi": ("ra", "rsi"),
+                     "ramb": ("ra", "mb1"),
+                     "rakp": ("ra", "kp"),
+                     "capo": ("ra", "capo"),
+                     "mmr": ("ra", "mmr"),
+                     "sport202": ("ra", "sport202"),
+                     "raz": ("ra", "raz"),
+                     }
 
     def __init__(self,
                  povezava_do_html: str,
                  nastavitve: dict = None,
-                 številka: int = None,
+                 številka: int = None,  # oz. ID, npr. 174890078 oz. tvs1
                  api_info: dict = None,
                  povezava_do_posnetka: str = None,
                  jwt: str = None,
@@ -54,9 +73,10 @@ class Posnetek:
         except AssertionError:
             return  # TODO logging
 
-        if Posnetek.štiride.search(povezava_do_html):
-            return True
-        elif Posnetek.radio.search(povezava_do_html):
+        if any((Posnetek.štiride.search(povezava_do_html),
+                Posnetek.radio.search(povezava_do_html),
+                Posnetek.v_živo.search(povezava_do_html),
+                )):
             return True
 
     def preveri_nastavitve(self):
@@ -76,9 +96,14 @@ class Posnetek:
             self.številka = self.razberi_številko()
 
     def razberi_številko(self):
+        """
+        razbere številko oz. ID iz spletne povezave oz. iz HTML-ja
+        """
         if ujemanje := self.štiride.search(self.povezava_do_html):
             return ujemanje.group(2)
-        else:  # radio
+        elif ujemanje := self.v_živo.search(self.povezava_do_html):
+            return ujemanje.group(1)
+        else:  # radio, brez številke oz. ID-ja v spletni povezavi
             self.html = self.pridobi_spletno_stran(self.povezava_do_html).text
             try:
                 return self.štiride.search(self.html).group(2)
@@ -113,8 +138,13 @@ class Posnetek:
             return  # TODO logging
 
     def pridobi_povezavo(self):
+        if self.jwt:
+            ukaz = self.povezava_api_posnetek()
+        else:
+            ukaz = self.povezava_api_v_živo()
         povezava = self.json_povezava(self.pridobi_json(
-            self.pridobi_spletno_stran(self.povezava_api_posnetek()).text))
+            self.pridobi_spletno_stran(ukaz).text))
+
         if not self.validacija_povezave_do_posnetka(povezava):
             self.povezava_do_posnetka = povezava
         else:
@@ -126,28 +156,44 @@ class Posnetek:
     @staticmethod
     def json_povezava(džejsn: dict
                       ) -> str:
+        """
+        iz JSON-a, pretvorjenega v slovar, razbere povezavo do posnetka
+        če je na voljo več ločljivosti, izbere najvišjo
+        TODO izbira ločljivosti
+        """
+        def v_živo(izbire):
+            return izbire[0]["streamer"] + izbire[0]["file"]
+
+        def arhivski_posnetek(izbire):
+            if len(izbire) > 1:
+                # seznam ločljivosti
+                vrednosti = [izbira["height"] for izbira in izbire]
+                # najde pozicijo posnetka z najvišjo ločljivostjo
+                pozicija = vrednosti.index(max(vrednosti))
+                if izbire[pozicija]["streams"]["hls_sec"]:  # https
+                    return izbire[pozicija]["streams"]["hls_sec"]
+                elif izbire[pozicija]["streams"]["hls"]:  # http
+                    return izbire[pozicija]["streams"]["hls"]
+            else:
+                try:
+                    return izbire[0]["streams"]["https"]
+                except KeyError:
+                    try:
+                        return izbire[0]["streams"]["http"]
+                    except KeyError:
+                        return  # TODO logging
+
         try:
             izbire = džejsn["mediaFiles"]
         except KeyError:
             return  # TODO logging
-        if len(izbire) > 1:
-            # seznam ločljivosti
-            vrednosti = [izbira["height"] for izbira in izbire]
-            # najde pozicijo posnetka z najvišjo ločljivostjo
-            # TODO izbira ločljivosti
-            pozicija = vrednosti.index(max(vrednosti))
-            if izbire[pozicija]["streams"]["hls_sec"]:
-                return izbire[pozicija]["streams"]["hls_sec"]
-            elif izbire[pozicija]["streams"]["hls"]:
-                return izbire[pozicija]["streams"]["hls"]
+
+        try:
+            assert džejsn["category"] == "live"
+        except KeyError:
+            return arhivski_posnetek(izbire)
         else:
-            try:
-                return izbire[0]["streams"]["https"]
-            except KeyError:
-                try:
-                    return izbire[0]["streams"]["http"]
-                except KeyError:
-                    return  # TODO logging
+            return v_živo(izbire)
 
     @staticmethod
     def validacija_povezave_do_posnetka(povezava: str
@@ -164,7 +210,6 @@ class Posnetek:
         mmc = re.compile(r"data-recording=\"(\d{4,11})\"")
         if niz := mp3.search(self.html):
             return niz.group(1)
-        # elif niz := self.štiride.search(self.html):
         elif niz := mmc.search(self.html):
             return niz.group(1)
 
@@ -172,6 +217,12 @@ class Posnetek:
                               ) -> str:
         return (f"https://api.rtvslo.si/ava/getMedia/{self.številka}"
                 f"?client_id={self.nastavitve['client_id']}&jwt={self.jwt}")
+
+    def povezava_api_v_živo(self):
+        return (f"https://api.rtvslo.si/ava/getLiveStream/"
+                f"{self.seznam_v_živo[self.številka][0]}."
+                f"{self.seznam_v_živo[self.številka][1]}"
+                f"?client_id={self.nastavitve['client_id']}")
 
     def pridobi_naslov(self
                        ) -> str:
@@ -233,8 +284,11 @@ class Posnetek:
         self.validacija_povezave()
         self.preveri_nastavitve()
         self.pridobi_številko()
-        self.pridobi_jwt()
-        self.pridobi_povezavo()
+        if self.številka not in self.seznam_v_živo.keys():
+            self.pridobi_jwt()
+            self.pridobi_povezavo()
+        else:
+            self.pridobi_povezavo()
 
     def predvajaj(self):
         self.start()
