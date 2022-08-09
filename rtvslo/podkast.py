@@ -28,7 +28,7 @@ def pridobi_seznam_povezav(povezava_do_podkasta: str
     r = rtvslo.rtv.Posnetek.pridobi_spletno_stran(povezava_do_podkasta)
     stran = html.fromstring(r.content)
 
-    if ujemanje := rtvslo.rtv.Posnetek.erteve.search(povezava_do_podkasta):
+    if ujemanje := rtvslo.rtv.Posnetek.radio.search(povezava_do_podkasta):
         return ustvari_povezave(ujemanje.group(1), stran)
     elif ujemanje := rtvslo.rtv.Posnetek.štiride.search(povezava_do_podkasta):
         return ustvari_povezave(ujemanje.group(1), stran)
