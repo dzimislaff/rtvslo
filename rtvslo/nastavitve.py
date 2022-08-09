@@ -12,7 +12,7 @@ def ustvari_nastavitve(config,
     predvajalnik = input("Vnesite ime predvajalnika (npr.: mpv).\n")
     možnosti_predvajalnika = input(
         "Vnesite dodatne možnosti za predvajalnik (npr.: --force-window)\n")
-    shranjevalnik = input("Vnesite ime shranjevalnika (npr. youtube-dl")
+    shranjevalnik = input("Vnesite ime shranjevalnika (npr. youtube-dl)\n")
 
     config["DOSTOP"] = {"client_id": client_id}
     config["PREDVAJANJE"] = {"predvajalnik": predvajalnik,
