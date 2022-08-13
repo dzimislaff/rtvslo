@@ -56,6 +56,8 @@ def ukazi():
     parser_shrani = subparsers.add_parser("shrani")
     parser_shrani.add_argument("povezava", nargs="?", default=None)
     parser_shrani.add_argument("--id", action="store", type=int)
+    parser_shrani.add_argument(
+        "-p", "--pravi-naslov", action="store_const", const="pravi-naslov")
 
     parser_izpiši = subparsers.add_parser("izpiši")
     parser_izpiši.add_argument("povezava", nargs="?", default=None)
@@ -93,6 +95,8 @@ def ukaznavrstica():
             cwd = os.getcwd()
             # je to nujno?
             os.chdir(os.path.dirname(os.path.realpath(__file__)))
+            if ukaz.pravi_naslov:
+                posnetek.možnosti.append(ukaz.pravi_naslov)
             try:
                 posnetek.shrani(cwd)
             except rtvslo.rtv.NeveljavnaPovezava:

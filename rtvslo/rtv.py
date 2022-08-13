@@ -49,7 +49,8 @@ class Posnetek:
                  povezava_do_posnetka: str = None,
                  jwt: str = None,
                  html: str = None,
-                 naslov: str = None
+                 naslov: str = None,
+                 možnosti: list = [],
                  ):
         self.povezava_do_html = povezava_do_html
         self.nastavitve = nastavitve
@@ -59,6 +60,7 @@ class Posnetek:
         self.jwt = jwt
         self.html = html
         self.naslov = naslov
+        self.možnosti = možnosti
 
     def validacija_povezave(self):
         povezava = self.preveri_html_povezavo(self.povezava_do_html)
@@ -229,10 +231,28 @@ class Posnetek:
         """
         razbere naslov posnetka iz JSON-a
         """
+
+        def naslov_za_arhiv(api: dict,
+                            nastavitve: dict):
+            """
+            v-telovadnici(.mp4)
+            """
+            return Posnetek.odstrani_znake(
+                api['title'].lower(),
+                nastavitve['znaki'].split(','))
+
+        def pravi_naslov(api: dict):
+            """
+            Pujsa Pepa - V telovadnici(.mp4)
+            """
+            return f"{api['showName']} - {api['title']}"
+
+        if "pravi-naslov" in self.možnosti:
+            naslov = pravi_naslov(self.api_info)
+        else:
+            naslov = naslov_za_arhiv(self.api_info, self.nastavitve)
         try:
-            self.naslov = self.odstrani_znake(
-                self.api_info['title'].lower(),
-                self.nastavitve['znaki'].split(','))
+            self.naslov = naslov
         except (KeyError, TypeError):
             return  # TODO logging
 
