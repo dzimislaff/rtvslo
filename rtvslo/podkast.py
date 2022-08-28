@@ -46,6 +46,7 @@ def main(povezava_do_podkasta: str):
     if povezave:
         for povezava in povezave:
             posnetek = rtvslo.rtv.Posnetek(povezava, nastavitve)
+            posnetek.možnosti = ["pravi-naslov"]
             try:
                 posnetek.shrani(cwd)
             except rtvslo.rtv.NeveljavnaPovezava:
