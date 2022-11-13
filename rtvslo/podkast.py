@@ -20,7 +20,7 @@ def pridobi_seznam_povezav(povezava_do_podkasta: str
             "ars": radijski_ključ,
             "prvi": radijski_ključ,
             "val202": radijski_ključ,
-            "365": '//h3[@class="title-cut-4-rows"]/a//@href'
+            "365": '//h5[@class="title-cut-4-rows preview-title"]/a//@href'
         }
         konci_povezav = stran.xpath(ključi[ujemanje])
         return [f"https://{ujemanje}.rtvslo.si{i}" for i in konci_povezav]
