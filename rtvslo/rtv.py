@@ -85,7 +85,7 @@ class Posnetek:
         if not self.nastavitve:
             raise BrezNastavitev
 
-    @ staticmethod
+    @staticmethod
     def pridobi_spletno_stran(naslov: str
                               ) -> requests.models.Response:
         try:
@@ -266,7 +266,7 @@ class Posnetek:
                        nedovoljeni_znaki: list
                        ) -> str:
         """
-        odstrani nedovoljene znake iz niza znakov
+        odstrani nazaželene znake iz niza znakov
         """
         try:
             assert isinstance(beseda, str)
@@ -306,6 +306,9 @@ class Posnetek:
                          self.nastavitve["možnosti"]])
 
     def start(self):
+        '''
+        metafunkcija, katere namen je pridobiti povezavo do posnetka
+        '''
         self.validacija_povezave()
         self.preveri_nastavitve()
         self.pridobi_številko()
@@ -316,10 +319,16 @@ class Posnetek:
             self.pridobi_povezavo()
 
     def predvajaj(self):
+        '''
+        metafunkcija, katere namen predvajati posnetek v predvajalniku
+        '''
         self.start()
         self.predvajaj_posnetek()
 
     def shrani(self, cwd):
+        '''
+        metafunkcija, katere namen je shraniti posnetek na disk
+        '''
         self.start()
-        self.pridobi_naslov()
+        self.pridobi_naslov()  # pridobi naslov posnetka iz JSON-a
         self.shrani_posnetek(cwd)
