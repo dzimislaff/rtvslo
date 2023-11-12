@@ -168,25 +168,26 @@ class Posnetek:
             return izbire[0]["streamer"] + izbire[0]["file"]
 
         def arhivski_posnetek(izbire):
+            ponujene_možnosti = ("hls_sec",
+                                 "hls",
+                                 "https",
+                                 "http")
+
+            def izberi(ponujene_možnosti: tuple,
+                       pozicija: int = 0
+                       ):
+                for ponujena_možnost in ponujene_možnosti:
+                    try:
+                        return izbire[pozicija]["streams"][ponujena_možnost]
+                    except KeyError:
+                        return  # TODO logging
+            pozicija = 0
             if len(izbire) > 1:
                 # seznam ločljivosti
                 vrednosti = [izbira["height"] for izbira in izbire]
                 # najde pozicijo posnetka z najvišjo ločljivostjo
                 pozicija = vrednosti.index(max(vrednosti))
-                if izbire[pozicija]["streams"]["hls_sec"]:  # https
-                    return izbire[pozicija]["streams"]["hls_sec"]
-                elif izbire[pozicija]["streams"]["hls"]:  # http
-                    return izbire[pozicija]["streams"]["hls"]
-            else:
-                ponujene_možnosti = ("hls_sec",
-                                     "hls",
-                                     "https",
-                                     "http")
-                for ponujena_možnost in ponujene_možnosti:
-                    try:
-                        return izbire[0]["streams"][ponujena_možnost]
-                    except KeyError:
-                        return  # TODO logging
+            return izberi(ponujene_možnosti, pozicija)
 
         try:
             izbire = džejsn["mediaFiles"]
