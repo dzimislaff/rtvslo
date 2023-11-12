@@ -4,12 +4,11 @@
 import pytest
 
 delujoče = [
-    'https://4d.rtvslo.si/arhiv/sedmi-dan/174681705',
-    'https://4d.rtvslo.si/arhiv/pogled-na/174574657',
-    'https://4d.rtvslo.si/arhiv/dokumentarni-filmi-in-oddaje-kulturno-umetniski-program/174615520',
-    'https://4d.rtvslo.si/arhiv/dokumentarni-filmi-in-oddaje-kulturno-umetniski-program/174369897',
-    'https://4d.rtvslo.si/arhiv/prvi-na-maturi/174688153',
-    'https://4d.rtvslo.si/arhiv/meje-mojega-jezika-niso-meje-mojega-sveta/109826798',
+    'https://365.rtvslo.si/arhiv/sedmi-dan/174993355',
+    'https://365.rtvslo.si/arhiv/utrip/175000441',
+    'https://365.rtvslo.si/arhiv/dokumentarni-portret/174379175',
+    'https://365.rtvslo.si/arhiv/prvi-na-maturi/174868122',
+    'https://365.rtvslo.si/arhiv/aktualna-tema/174933146',
     'https://365.rtvslo.si/arhiv/jezero/174660165',
     'https://365.rtvslo.si/arhiv/sport/174841952',
     'https://365.rtvslo.si/arhiv/dolina-roz/174845696',
