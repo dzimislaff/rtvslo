@@ -178,11 +178,13 @@ class Posnetek:
                 elif izbire[pozicija]["streams"]["hls"]:  # http
                     return izbire[pozicija]["streams"]["hls"]
             else:
-                try:
-                    return izbire[0]["streams"]["https"]
-                except KeyError:
+                ponujene_možnosti = ("hls_sec",
+                                     "hls",
+                                     "https",
+                                     "http")
+                for ponujena_možnost in ponujene_možnosti:
                     try:
-                        return izbire[0]["streams"]["http"]
+                        return izbire[0]["streams"][ponujena_možnost]
                     except KeyError:
                         return  # TODO logging
 
