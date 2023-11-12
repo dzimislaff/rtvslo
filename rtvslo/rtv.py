@@ -20,9 +20,10 @@ class BrezNastavitev(Exception):  # TODO premakni v exceptions.py
 class Posnetek:
 
     štiride = re.compile(
-        r"https?:\/\/(4d|365|www)\.rtvslo\.si\/\S+\/(\d{4,11})")
+        r"https?:\/\/(365|www)\.rtvslo\.si\/\S+\/(\d{4,11})")
     radio = re.compile(r"https?:\/\/(ars|prvi|val202)\.rtvslo\.si\/.+")
     v_živo = re.compile(r"https?:\/\/365\.rtvslo\.si\/vzivo\/(\w{3,8})")
+
     seznam_v_živo = {"tvs1": ("tv", "slo1"),
                      "tvs2": ("tv", "slo2"),
                      "tvs3": ("tv", "slo3"),
