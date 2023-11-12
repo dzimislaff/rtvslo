@@ -204,9 +204,7 @@ class Posnetek:
         vrne True, če je povezava do posnetka neustrezna
         '''
         napačni = ("expired", "dummy")
-        if not povezava:
-            return True
-        elif any(i in povezava for i in napačni):
+        if not povezava or any(i in povezava for i in napačni):
             return True
 
     def poišči_povezavo_v_htmlju(self
