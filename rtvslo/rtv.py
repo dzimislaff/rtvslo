@@ -180,7 +180,7 @@ class Posnetek:
                     try:
                         return izbire[pozicija]["streams"][ponujena_možnost]
                     except KeyError:
-                        return  # TODO logging
+                        pass  # TODO logging
             pozicija = 0
             if len(izbire) > 1:
                 # seznam ločljivosti
