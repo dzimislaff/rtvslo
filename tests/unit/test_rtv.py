@@ -73,7 +73,8 @@ def povezava_do_posnetka_4d():
     http
     ostale: hls, mpeg-dash, hls-sec
     """
-    return r'http://progressive.rtvslo.si/encrypted00/2011/07/05/MejemojegajezikanisomejemojegasvetaLjubicaPodborsekx201107051805x700000x351x413x.mp4?keylockhash=gcdYMFv5n-VTFQRyx7f_vtfai9u844NEoYC2Mv0JWPw'
+    # return r'http://progressive.rtvslo.si/encrypted00/2011/07/05/MejemojegajezikanisomejemojegasvetaLjubicaPodborsekx201107051805x700000x351x413x.mp4?keylockhash=gcdYMFv5n-VTFQRyx7f_vtfai9u844NEoYC2Mv0JWPw'
+    return r'https://vodstr.rtvslo.si/encrypted00/_definst_/2011/07/05/MejemojegajezikanisomejemojegasvetaLjubicaPodborsekx201107051805x700000x351x413x.mp4/playlist.m3u8?keylockhash=NS5DrxHHXUa3mHOmrp4IFz5HQm1aH5E6tS2nnh7UdpM'
 
 
 @pytest.fixture
