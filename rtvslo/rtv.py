@@ -276,7 +276,7 @@ class Posnetek:
             """
             return f"{api['showName']} - {api['title']}"
 
-        if "pravi-naslov" in self.možnosti['pravi_naslov']:
+        if self.možnosti['pravi_naslov']:
             naslov = pravi_naslov(self.api_info)
         else:
             naslov = naslov_za_arhiv(self.api_info, self.nastavitve)
