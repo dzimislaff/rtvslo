@@ -52,16 +52,20 @@ def ukazi():
     parser_predvajaj = subparsers.add_parser("predvajaj")
     parser_predvajaj.add_argument("povezava", nargs="?", default=None)
     parser_predvajaj.add_argument("--id", action="store", type=int)
+    parser_predvajaj.add_argument("--ločljivost", action="store", type=int)
 
     parser_shrani = subparsers.add_parser("shrani")
     parser_shrani.add_argument("povezava", nargs="?", default=None)
     parser_shrani.add_argument("--id", action="store", type=int)
-    parser_shrani.add_argument(
-        "-p", "--pravi-naslov", action="store_const", const="pravi-naslov")
+    parser_shrani.add_argument("--ločljivost", action="store", type=int)
+    parser_shrani.add_argument("-p", "--pravi-naslov", action="store_true")
+    # parser_shrani.add_argument(
+    #     "-p", "--pravi-naslov", action="store_const", const="pravi-naslov")
 
     parser_izpiši = subparsers.add_parser("izpiši")
     parser_izpiši.add_argument("povezava", nargs="?", default=None)
     parser_izpiši.add_argument("--id", action="store", type=int)
+    parser_izpiši.add_argument("--ločljivost", action="store", type=int)
 
     return (parser.parse_args(),  # ukaz
             parser)               # parser
@@ -86,6 +90,7 @@ def ukaznavrstica():
         print("Povezava je neveljavna.")
     else:
         if ukaz.ukaz == "predvajaj":
+            posnetek.možnosti['ločljivost'] = ukaz.ločljivost
             try:
                 posnetek.predvajaj()
             except rtvslo.rtv.NeveljavnaPovezava:
@@ -95,13 +100,15 @@ def ukaznavrstica():
             cwd = os.getcwd()
             # je to nujno?
             os.chdir(os.path.dirname(os.path.realpath(__file__)))
+            posnetek.možnosti['ločljivost'] = ukaz.ločljivost
             if ukaz.pravi_naslov:
-                posnetek.možnosti.append(ukaz.pravi_naslov)
+                posnetek.možnosti['pravi_naslov'] = ukaz.pravi_naslov
             try:
                 posnetek.shrani(cwd)
             except rtvslo.rtv.NeveljavnaPovezava:
                 print("Povezava je neveljavna.")
         elif ukaz.ukaz == "izpiši":
+            posnetek.možnosti['ločljivost'] = ukaz.ločljivost
             try:
                 posnetek.start()
                 print(posnetek.povezava_do_posnetka)

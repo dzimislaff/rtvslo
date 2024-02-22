@@ -11,12 +11,14 @@ def ustvari_nastavitve(config,
     client_id = input("Vnesite identifikacijsko številko uporabnika.\n")
     predvajalnik = input("Vnesite ime predvajalnika (npr.: mpv).\n")
     možnosti_predvajalnika = input(
-        "Vnesite dodatne možnosti za predvajalnik (npr.: --force-window)\n")
-    shranjevalnik = input("Vnesite ime shranjevalnika (npr. youtube-dl)\n")
+        "Vnesite dodatne možnosti za predvajalnik (npr.: --force-window).\n")
+    ločljivost = input("Vnesite želeno ločljivost. (npr.: 1080) \n")
+    shranjevalnik = input("Vnesite ime shranjevalnika (npr. yt-dlp).\n")
 
     config["DOSTOP"] = {"client_id": client_id}
     config["PREDVAJANJE"] = {"predvajalnik": predvajalnik,
-                             "možnosti predvajalnika": možnosti_predvajalnika}
+                             "možnosti predvajalnika": možnosti_predvajalnika,
+                             "ločljivost": ločljivost}
     config["SHRANJEVANJE"] = {"shranjevalnik": shranjevalnik}
     ime_datoteke = Path(__file__).parent / ime_datoteke
     with open(ime_datoteke, "w") as f:

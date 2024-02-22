@@ -51,7 +51,8 @@ class Posnetek:
                  jwt: str = None,
                  html: str = None,
                  naslov: str = None,
-                 možnosti: list = [],
+                 # ločljivost: int = None,
+                 možnosti: dict = {},
                  ):
         self.povezava_do_html = povezava_do_html
         self.nastavitve = nastavitve
@@ -61,6 +62,7 @@ class Posnetek:
         self.jwt = jwt
         self.html = html
         self.naslov = naslov
+        # self.ločljivost = ločljivost
         self.možnosti = možnosti
 
     def validacija_povezave(self):
@@ -145,8 +147,16 @@ class Posnetek:
             ukaz = self.povezava_api_posnetek()
         else:
             ukaz = self.povezava_api_v_živo()
+
+        if self.možnosti["ločljivost"]:
+            ločljivost = self.možnosti["ločljivost"]
+        else:
+            try:
+                ločljivost = int(self.nastavitve["ločljivost"])
+            except KeyError:  # TODO logging
+                ločljivost = None
         povezava = self.json_povezava(self.pridobi_json(
-            self.pridobi_spletno_stran(ukaz).text))
+            self.pridobi_spletno_stran(ukaz).text), ločljivost)
 
         if not self.validacija_povezave_do_posnetka(povezava):
             self.povezava_do_posnetka = povezava
@@ -157,7 +167,8 @@ class Posnetek:
                 self.pridobi_povezavo()
 
     @staticmethod
-    def json_povezava(džejsn: dict
+    def json_povezava(džejsn: dict,
+                      ločljivost: int = None
                       ) -> str:
         """
         iz JSON-a, pretvorjenega v slovar, razbere povezavo do posnetka
@@ -167,7 +178,9 @@ class Posnetek:
         def v_živo(izbire):
             return izbire[0]["streamer"] + izbire[0]["file"]
 
-        def arhivski_posnetek(izbire):
+        def arhivski_posnetek(izbire,
+                              ločljivost: int = None
+                              ):
             ponujene_možnosti = ("hls_sec",
                                  "hls",
                                  "https",
@@ -181,12 +194,21 @@ class Posnetek:
                         return izbire[pozicija]["streams"][ponujena_možnost]
                     except KeyError:
                         pass  # TODO logging
+            # samo ena ločljivost
             pozicija = 0
+            # več ločljivosti
             if len(izbire) > 1:
                 # seznam ločljivosti
-                vrednosti = [izbira["height"] for izbira in izbire]
-                # najde pozicijo posnetka z najvišjo ločljivostjo
-                pozicija = vrednosti.index(max(vrednosti))
+                ločljivosti = [izbira["height"] for izbira in izbire]
+                # izbrana ločljivost
+                if ločljivost:
+                    try:
+                        pozicija = ločljivosti.index(ločljivost)
+                    except ValueError:
+                        pass  # TODO loggin; ta ločljivost ni na voljo
+                else:
+                    # najde pozicijo posnetka z najvišjo ločljivostjo
+                    pozicija = ločljivosti.index(max(ločljivosti))
             return izberi(ponujene_možnosti, pozicija)
 
         try:
@@ -197,7 +219,7 @@ class Posnetek:
         try:
             assert džejsn["category"] == "live"
         except KeyError:
-            return arhivski_posnetek(izbire)
+            return arhivski_posnetek(izbire, ločljivost)
         else:
             return v_živo(izbire)
 
@@ -254,7 +276,7 @@ class Posnetek:
             """
             return f"{api['showName']} - {api['title']}"
 
-        if "pravi-naslov" in self.možnosti:
+        if "pravi-naslov" in self.možnosti['pravi_naslov']:
             naslov = pravi_naslov(self.api_info)
         else:
             naslov = naslov_za_arhiv(self.api_info, self.nastavitve)
