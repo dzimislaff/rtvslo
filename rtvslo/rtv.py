@@ -2,6 +2,7 @@
 # -*- coding: 'UTF-8' -*-
 
 import json
+import os
 import re
 import requests
 import subprocess
@@ -51,7 +52,6 @@ class Posnetek:
                  jwt: str = None,
                  html: str = None,
                  naslov: str = None,
-                 # ločljivost: int = None,
                  možnosti: dict = {},
                  ):
         self.povezava_do_html = povezava_do_html
@@ -62,7 +62,6 @@ class Posnetek:
         self.jwt = jwt
         self.html = html
         self.naslov = naslov
-        # self.ločljivost = ločljivost
         self.možnosti = možnosti
 
     def validacija_povezave(self):
@@ -276,7 +275,7 @@ class Posnetek:
             """
             return f"{api['showName']} - {api['title']}"
 
-        if self.možnosti['pravi_naslov']:
+        if 'pravi_naslov' in self.možnosti:
             naslov = pravi_naslov(self.api_info)
         else:
             naslov = naslov_za_arhiv(self.api_info, self.nastavitve)
@@ -307,8 +306,10 @@ class Posnetek:
         return beseda
 
     def zapiši_info(self, cwd: str):
-        with open(f"{cwd}/{self.naslov}.json", "w") as datoteka:
-            json.dump(self.api_info, datoteka, indent=4, ensure_ascii=False)
+        mesto_datoteke = f"{cwd}/{self.naslov}.json"
+        if not os.path.isfile(mesto_datoteke):
+            with open(mesto_datoteke, "w") as datoteka:
+                json.dump(self.api_info, datoteka, indent=4, ensure_ascii=False)
 
     def zapiši_posnetek(self, cwd):
         subprocess.call([self.nastavitve["shranjevalnik"],
@@ -321,8 +322,8 @@ class Posnetek:
         if not self.povezava_do_posnetka:
             print("Posnetek ni na voljo.")
         else:
-            self.zapiši_posnetek(cwd)
             self.zapiši_info(cwd)
+            self.zapiši_posnetek(cwd)
 
     def predvajaj_posnetek(self):
         subprocess.call([self.nastavitve["predvajalnik"],
