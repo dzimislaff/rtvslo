@@ -306,10 +306,11 @@ class Posnetek:
         return beseda
 
     def zapiši_info(self, cwd: str):
-        mesto_datoteke = f"{cwd}/{self.naslov}.json"
+        mesto_datoteke = f"{cwd}/{self.naslov}.json".replace("//", "/")
         if not os.path.isfile(mesto_datoteke):
             with open(mesto_datoteke, "w") as datoteka:
-                json.dump(self.api_info, datoteka, indent=4, ensure_ascii=False)
+                json.dump(self.api_info, datoteka,
+                          indent=4, ensure_ascii=False)
 
     def zapiši_posnetek(self, cwd):
         subprocess.call([self.nastavitve["shranjevalnik"],
@@ -318,12 +319,29 @@ class Posnetek:
                          self.povezava_do_posnetka],
                         cwd=cwd)
 
+    def zapiši_podnapise(self, cwd):
+        for podnapis in self.api_info['subtitles']:
+            url_podnapisov = podnapis["file"]
+            vrsta_podnapisov = podnapis["format"]
+            jezik_podnapisov = podnapis["jezik"]
+            mesto_datoteke = f"{cwd}/{self.naslov}-{jezik_podnapisov.lower()}.{vrsta_podnapisov}".replace("//", "/")
+            datoteka = self.pridobi_spletno_stran(url_podnapisov)
+            with open(mesto_datoteke, "wb") as file:
+                file.write(datoteka.content)
+
+
+        self.pridobi_spletno_stran()
+        if not os.path.isfile(mesto_datoteke):
+            with open(mesto_datoteke, "w") as datoteka:
+                pass
+
     def shrani_posnetek(self, cwd):
         if not self.povezava_do_posnetka:
             print("Posnetek ni na voljo.")
         else:
             self.zapiši_info(cwd)
             self.zapiši_posnetek(cwd)
+            self.zapiši_podnapise(cwd)
 
     def predvajaj_posnetek(self):
         subprocess.call([self.nastavitve["predvajalnik"],
