@@ -323,7 +323,7 @@ class Posnetek:
         for podnapis in self.api_info['subtitles']:
             url_podnapisov = podnapis["file"]
             vrsta_podnapisov = podnapis["format"]
-            jezik_podnapisov = podnapis["jezik"]
+            jezik_podnapisov = podnapis["language"]
             mesto_datoteke = f"{cwd}/{self.naslov}-{jezik_podnapisov.lower()}.{vrsta_podnapisov}".replace("//", "/")
             datoteka = self.pridobi_spletno_stran(url_podnapisov)
             with open(mesto_datoteke, "wb") as file:
