@@ -320,6 +320,10 @@ class Posnetek:
                         cwd=cwd)
 
     def zapiši_podnapise(self, cwd):
+        try:
+            self.api_info['subtitles']
+        except KeyError:
+            return  # TODO logging
         for podnapis in self.api_info['subtitles']:
             url_podnapisov = podnapis["file"]
             vrsta_podnapisov = podnapis["format"]
