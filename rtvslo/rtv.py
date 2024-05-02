@@ -324,16 +324,13 @@ class Posnetek:
             url_podnapisov = podnapis["file"]
             vrsta_podnapisov = podnapis["format"]
             jezik_podnapisov = podnapis["language"]
-            mesto_datoteke = f"{cwd}/{self.naslov}-{jezik_podnapisov.lower()}.{vrsta_podnapisov}".replace("//", "/")
+            if not jezik_podnapisov:
+                jezik_podnapisov = "cc"
+            mesto_datoteke = f"{cwd}/{self.naslov}-{jezik_podnapisov.lower()}.{vrsta_podnapisov.lower()}".replace("//", "/")
             datoteka = self.pridobi_spletno_stran(url_podnapisov)
             with open(mesto_datoteke, "wb") as file:
                 file.write(datoteka.content)
 
-
-        self.pridobi_spletno_stran()
-        if not os.path.isfile(mesto_datoteke):
-            with open(mesto_datoteke, "w") as datoteka:
-                pass
 
     def shrani_posnetek(self, cwd):
         if not self.povezava_do_posnetka:
