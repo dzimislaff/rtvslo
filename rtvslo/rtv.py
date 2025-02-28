@@ -272,8 +272,9 @@ class Posnetek:
         def pravi_naslov(api: dict):
             """
             Pujsa Pepa - V telovadnici(.mp4)
+            Odprta knjiga na radiu - Drago Jančar: In ljubezen tudi (4/39)
             """
-            return f"{api['showName']} - {api['title']}"
+            return f"{api['showName']} - {api['title'].replace('/', '-')}"
 
         if 'pravi_naslov' in self.možnosti:
             naslov = pravi_naslov(self.api_info)
@@ -327,7 +328,7 @@ class Posnetek:
         for podnapis in self.api_info['subtitles']:
             url_podnapisov = podnapis["file"]
             vrsta_podnapisov = podnapis["format"]
-            jezik_podnapisov = podnapis["language"]
+            jezik_podnapisov = podnapis["language"].rstrip()
             if not jezik_podnapisov:
                 jezik_podnapisov = "cc"
             mesto_datoteke = f"{cwd}/{self.naslov}-{jezik_podnapisov.lower()}.{vrsta_podnapisov.lower()}".replace("//", "/")
